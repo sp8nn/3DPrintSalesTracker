@@ -11,12 +11,27 @@
 
     <div class="container">
 
-        <h1>3D Print Sales Tracker</h1>
+        <nav class="navbar">
+    <div class="logo">3D Print Sales Tracker</div>
 
-        <div class="summary-box">
-            <h2>Total Revenue</h2>
-            <p id="totalRevenue">$0.00</p>
-        </div>
+    <div class="nav-links">
+        <button onclick="showPage('homePage')">Home</button>
+        <button onclick="showPage('salesPage')">Sales</button>
+        <button onclick="showPage('revenuePage')">Revenue</button>
+        <button onclick="showPage('settingsPage')">Settings</button>
+    </div>
+</nav>
+<section id="homePage" class="page active-page">
+    <div class="home-card">
+        <h1>Welcome</h1>
+        <p>This app helps small 3D printing businesses quickly track sales, revenue, and product performance.</p>
+
+        <button>Sign In</button>
+        <button>About</button>
+    </div>
+</section>
+
+<section id="salesPage" class="page">
 
         <div class="form-box">
 
@@ -24,21 +39,53 @@
 
             <form id="saleForm">
 
-                <label>Date</label>
-                <input type="date" id="saleDate" required>
+    <label>Which 3D Print was it?</label>
+    <select id="productSelect" class="big-select" required></select>  
 
-                <label>Item Name</label>
-                <input type="text" id="itemName" placeholder="Example: Keychain" required>
+    <label>What Color was it?</label>
+    <select id="colorSelect" class="big-select" required></select>
+        
+    <h2>Step 3 — Quantity Sold</h2>
 
-                <label>Price</label>
-                <input type="number" id="price" step="0.01" placeholder="Example: 5.00" required>
+    <input type="number" id="quantity" min="1" required>
 
-                <label>Quantity</label>
-                <input type="number" id="quantity" placeholder="Example: 2" required>
+    <h2>Step 4 — Purchase Amount</h2>
 
-                <button type="submit">Add Sale</button>
+    <input type="number" id="price" step="0.01" min="0" required>
 
-            </form>
+    <label>Where did the customer find the product?</label>
+    <select id="sourceSelect" class="big-select" required></select>
+
+    <button type="submit">Add Sale</button>
+    
+   <section id="settingsPage" class="page">
+    <div class="customize-box">
+        <h2>Settings</h2>
+        <p>Edit the options that appear in the sales form.</p>
+
+    <div class="option-editor">
+        <h3>Products</h3>
+        <input type="text" id="newProductOption" placeholder="Example: Flexi Dragon">
+        <button type="button" onclick="addOption('products')">Add Product</button>
+        <ul id="productOptionsList"></ul>
+    </div>
+
+    <div class="option-editor">
+        <h3>Colors</h3>
+        <input type="text" id="newColorOption" placeholder="Example: Silk Gold">
+        <button type="button" onclick="addOption('colors')">Add Color</button>
+        <ul id="colorOptionsList"></ul>
+    </div>
+
+    <div class="option-editor">
+        <h3>Customer Sources</h3>
+        <input type="text" id="newSourceOption" placeholder="Example: Etsy">
+        <button type="button" onclick="addOption('sources')">Add Source</button>
+        <ul id="sourceOptionsList"></ul>
+    </div>
+</div>
+
+</form>
 
         </div>
 
@@ -52,6 +99,8 @@
                     <tr>
                         <th>Date</th>
                         <th>Item</th>
+                        <th>Color</th>
+                        <th>Source</th>
                         <th>Price</th>
                         <th>Quantity</th>
                         <th>Total</th>
@@ -68,6 +117,37 @@
         </div>
 
     </div>
+
+    </section>
+
+<section id="revenuePage" class="page">
+    <div class="summary-box">
+        <h2>Revenue Dashboard</h2>
+        <p>Total Revenue:</p>
+        <p id="dashboardRevenue">$0.00</p>
+
+        <p>Most Popular Item:</p>
+        <p id="popularItem">No sales yet</p>
+    </div>
+
+    <div class="table-box">
+        <h2>Sale Timestamps</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Item</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+
+            <tbody id="revenueTableBody">
+            </tbody>
+        </table>
+    </div>
+</section>
 
     <script src="script.js"></script>
 
