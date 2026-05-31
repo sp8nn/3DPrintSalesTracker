@@ -33,93 +33,60 @@
 
 <section id="salesPage" class="page">
 
-        <div class="form-box">
+    <div class="form-box">
 
-            <h2>Add Sale</h2>
+        <h2>Add Sale</h2>
 
-            <form id="saleForm">
+        <form id="saleForm">
 
-    <label>Which 3D Print was it?</label>
-    <select id="productSelect" class="big-select" required></select>  
+            <div id="dynamicSalesForm"></div>
 
-    <label>What Color was it?</label>
-    <select id="colorSelect" class="big-select" required></select>
-        
-    <h2>Step 3 — Quantity Sold</h2>
+            <button type="submit">Add Sale</button>
 
-    <input type="number" id="quantity" min="1" required>
+        </form>
 
-    <h2>Step 4 — Purchase Amount</h2>
+    </div>
 
-    <input type="number" id="price" step="0.01" min="0" required>
+    <div class="table-box">
 
-    <label>Where did the customer find the product?</label>
-    <select id="sourceSelect" class="big-select" required></select>
+        <h2>Sales History</h2>
 
-    <button type="submit">Add Sale</button>
-    
-   <section id="settingsPage" class="page">
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Item</th>
+                    <th>Color</th>
+                    <th>Source</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody id="salesTableBody"></tbody>
+
+        </table>
+
+    </div>
+
+</section>
+
+<section id="settingsPage" class="page">
+
     <div class="customize-box">
+
         <h2>Settings</h2>
-        <p>Edit the options that appear in the sales form.</p>
 
-    <div class="option-editor">
-        <h3>Products</h3>
-        <input type="text" id="newProductOption" placeholder="Example: Flexi Dragon">
-        <button type="button" onclick="addOption('products')">Add Product</button>
-        <ul id="productOptionsList"></ul>
-    </div>
+        <p>Edit the questions and dropdown choices used in the Sales form.</p>
 
-    <div class="option-editor">
-        <h3>Colors</h3>
-        <input type="text" id="newColorOption" placeholder="Example: Silk Gold">
-        <button type="button" onclick="addOption('colors')">Add Color</button>
-        <ul id="colorOptionsList"></ul>
-    </div>
-
-    <div class="option-editor">
-        <h3>Customer Sources</h3>
-        <input type="text" id="newSourceOption" placeholder="Example: Etsy">
-        <button type="button" onclick="addOption('sources')">Add Source</button>
-        <ul id="sourceOptionsList"></ul>
-    </div>
-</div>
-
-</form>
-
-        </div>
-
-        <div class="table-box">
-
-            <h2>Sales History</h2>
-
-            <table>
-
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Item</th>
-                        <th>Color</th>
-                        <th>Source</th>
-                        <th>Price</th>
-                        <th>Quantity</th>
-                        <th>Total</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-
-                <tbody id="salesTableBody">
-
-                </tbody>
-
-            </table>
-
-        </div>
+        <div id="questionSettingsContainer"></div>
 
     </div>
 
-    </section>
-
+</section>
 <section id="revenuePage" class="page">
     <div class="summary-box">
         <h2>Revenue Dashboard</h2>

@@ -222,3 +222,279 @@ select option {
     border-radius: 6px;
     padding: 7px 12px;
 }
+.big-select {
+    width: 100%;
+    padding: 16px;
+    border-radius: 10px;
+    border: 2px solid #cbd5e1;
+    background-color: white;
+    font-size: 1.05rem;
+    cursor: pointer;
+}
+
+.big-select:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+form label {
+    font-size: 1.05rem;
+    margin-top: 10px;
+}
+
+form h2 {
+    margin-top: 20px;
+    border-left: 5px solid #2563eb;
+    padding-left: 10px;
+}
+
+select option {
+    font-size: 1rem;
+    padding: 10px;
+}
+.option-editor button {
+    margin-top: 8px;
+    margin-bottom: 12px;
+}
+
+.option-editor li span {
+    font-weight: 500;
+}
+
+.small-delete-btn {
+    background-color: #dc2626;
+    color: white;
+    border-radius: 6px;
+    padding: 7px 12px;
+}
+.choice-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 15px;
+    margin-top: 12px;
+}
+
+.choice-card {
+    background: white;
+    border: 2px solid #dbe3ee;
+    border-radius: 14px;
+    padding: 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.choice-card:hover {
+    transform: translateY(-2px);
+    border-color: #2563eb;
+}
+
+.choice-card.selected {
+    border-color: #2563eb;
+    background-color: #eff6ff;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+.choice-image {
+    height: 100px;
+    border-radius: 10px;
+    background-color: #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.choice-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.choice-image span {
+    color: #64748b;
+    font-size: 0.85rem;
+}
+
+.choice-card p {
+    margin: 10px 0 0;
+    font-weight: bold;
+}
+.quantity-control {
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transform: translateY(-6px);
+    transition: max-height 0.25s ease, opacity 0.25s ease, transform 0.25s ease;
+}
+
+.choice-card.selected .quantity-control {
+    max-height: 50px;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.qty-btn {
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.qty-display {
+    min-width: 28px;
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+.color-section {
+    display: grid;
+    gap: 12px;
+}
+
+.color-branch-box {
+    background: white;
+    border: 1px solid #dbe3ee;
+    border-radius: 12px;
+    padding: 14px;
+}
+
+.color-branch-box label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.helper-text {
+    color: #64748b;
+    font-style: italic;
+}
+.money-box {
+    background: white;
+    border: 1px solid #dbe3ee;
+    border-radius: 14px;
+    padding: 16px;
+}
+
+.money-display {
+    font-size: 2.4rem;
+    font-weight: bold;
+    text-align: center;
+    padding: 15px;
+    margin-bottom: 15px;
+    background-color: #f1f5f9;
+    border-radius: 12px;
+}
+
+.keypad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    max-width: 250px;
+    margin: 0 auto;
+}
+
+.keypad button {
+    font-size: 1rem;
+    padding: 10px;
+    height: 50px;
+    border-radius: 10px;
+}
+/* Question containers */
+.form-step {
+    margin-bottom: 25px;
+}
+
+/* Main question text */
+.form-step label {
+    display: block;
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: #1e293b;
+}
+
+/* Color assignment labels */
+.color-branch-box label {
+    font-size: 1.15rem;
+    font-weight: 600;
+}
+
+/* Dropdowns */
+.big-select {
+    font-size: 1.1rem;
+    padding: 12px;
+}
+
+/* Product card names */
+.choice-card p {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+/* Settings page question titles */
+.settings-card h3 {
+    font-size: 1.3rem;
+}
+/* Better dropdown styling */
+.big-select {
+    width: 100%;
+    min-height: 56px;
+    padding: 14px 16px;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #1e293b;
+    background-color: #ffffff;
+    border: 2px solid #cbd5e1;
+    border-radius: 14px;
+    cursor: pointer;
+}
+
+.big-select:hover {
+    border-color: #2563eb;
+    background-color: #f8fafc;
+}
+
+.big-select:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.18);
+}
+
+/* Color dropdown cards */
+.color-branch-box {
+    background: #f8fafc;
+    border: 2px solid #dbe3ee;
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 12px;
+}
+
+.color-branch-box label {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 10px;
+}
+
+/* Make source dropdown area feel like a step */
+.form-step:has(#source) {
+    background-color: #f8fafc;
+    border: 2px solid #dbe3ee;
+    border-radius: 16px;
+    padding: 18px;
+}
+
+/* Dropdown option readability */
+select option {
+    font-size: 1rem;
+    padding: 12px;
+}
