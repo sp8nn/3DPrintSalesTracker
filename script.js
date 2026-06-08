@@ -1,7 +1,12 @@
 const saleForm = document.getElementById("saleForm");
 const salesTableBody = document.getElementById("salesTableBody");
 
-let sales = JSON.parse(localStorage.getItem("sales")) || [];
+const SUPABASE_URL = "PASTE_PROJECT_URL_HERE";
+const SUPABASE_ANON_KEY = "PASTE_ANON_PUBLIC_KEY_HERE";
+
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+let sales = [];
 let productBarChart = null;
 let colorBarChart = null;
 let sourcePieChart = null;
@@ -54,8 +59,32 @@ const defaultFormQuestions = [
 
 let formQuestions = JSON.parse(localStorage.getItem("formQuestions")) || defaultFormQuestions;
 
-function saveSales() {
-    localStorage.setItem("sales", JSON.stringify(sales));
+async function loadSalesFromCloud() {
+    const { data, error } = await supabaseClient
+        .from("sales")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+    if (error) {
+        console.error("Error loading sales:", error);
+        alert("Could not load sales from Supabase.");
+        return;
+    }
+
+    sales = data.map(function(row) {
+        return {
+            id: row.id,
+            date: row.sale_date,
+            item: row.item,
+            color: row.color,
+            source: row.source,
+            price: Number(row.price),
+            quantity: row.quantity
+        };
+    });
+
+    displaySales();
+    updateRevenueDashboard();
 }
 
 function saveFormQuestions() {
@@ -490,10 +519,28 @@ function displaySales() {
     });
 }
 
-function deleteSale(index) {
+async function deleteSale(index) {
+    const saleToDelete = sales[index];
+
+    if (!saleToDelete.id) {
+        alert("This sale does not have a cloud ID yet.");
+        return;
+    }
+
+    const { error } = await supabaseClient
+        .from("sales")
+        .delete()
+        .eq("id", saleToDelete.id);
+
+    if (error) {
+        console.error("Error deleting sale:", error);
+        alert("Could not delete sale from Supabase.");
+        return;
+    }
+
     sales.splice(index, 1);
-    saveSales();
     displaySales();
+    updateRevenueDashboard();
 }
 function getChartColors(count) {
     const colors = [
@@ -1268,7 +1315,7 @@ function backspaceMoney() {
     moneyValue = moneyValue.slice(0, -1);
     updateMoneyDisplay();
 }
-saleForm.addEventListener("submit", function(event) {
+saleForm.addEventListener("submit", async function(event) {
     event.preventDefault();
 
     const selectedProducts = getSelectedProducts();
@@ -1304,10 +1351,29 @@ saleForm.addEventListener("submit", function(event) {
         quantity: selectedProducts.totalQuantity
     };
 
-    sales.push(newSale);
+    const { data, error } = await supabaseClient
+    .from("sales")
+    .insert({
+        sale_date: newSale.date,
+        item: newSale.item,
+        color: newSale.color,
+        source: newSale.source,
+        price: newSale.price,
+        quantity: newSale.quantity
+    })
+    .select();
 
-    saveSales();
+    if (error) {
+        console.error("Error saving sale:", error);
+        alert("Could not save sale to Supabase.");
+        return;
+    }
+
+    newSale.id = data[0].id;
+    sales.unshift(newSale);
+
     displaySales();
+    updateRevenueDashboard();
 
     saleForm.reset();
     moneyValue = "";
@@ -1316,4 +1382,4 @@ saleForm.addEventListener("submit", function(event) {
 
 buildSalesForm();
 buildSettingsForm();
-displaySales();
+loadSalesFromCloud();
