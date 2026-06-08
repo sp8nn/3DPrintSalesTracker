@@ -2,6 +2,9 @@ const saleForm = document.getElementById("saleForm");
 const salesTableBody = document.getElementById("salesTableBody");
 
 let sales = JSON.parse(localStorage.getItem("sales")) || [];
+let productBarChart = null;
+let colorBarChart = null;
+let sourcePieChart = null;
 
 const defaultFormQuestions = [
     {
@@ -492,26 +495,372 @@ function deleteSale(index) {
     saveSales();
     displaySales();
 }
+function getChartColors(count) {
+    const colors = [
+        "#2563eb", "#dc2626", "#16a34a", "#f59e0b", "#9333ea",
+        "#0891b2", "#db2777", "#65a30d", "#ea580c", "#475569",
+        "#7c3aed", "#0f766e", "#be123c", "#4d7c0f", "#1d4ed8"
+    ];
 
+    let result = [];
+
+    for (let i = 0; i < count; i++) {
+        result.push(colors[i % colors.length]);
+    }
+
+    return result;
+}
+function renderSourcePieChart(sourceCounts) {
+    const canvas = document.getElementById("sourcePieChart");
+
+    if (!canvas) return;
+
+    const labels = Object.keys(sourceCounts);
+    const data = Object.values(sourceCounts);
+    const colors = getChartColors(labels.length);
+
+    if (sourcePieChart !== null) {
+        sourcePieChart.destroy();
+    }
+
+    sourcePieChart = new Chart(canvas, {
+        type: "pie",
+        data: {
+            labels: labels,
+            datasets: [{
+                data: data,
+                backgroundColor: colors,
+                borderColor: "#ffffff",
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: "bottom"
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const total = data.reduce((sum, value) => sum + value, 0);
+                            const value = context.raw;
+                            const percent = ((value / total) * 100).toFixed(1);
+
+                            return `${context.label}: ${value} sale(s) (${percent}%)`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+function renderProductBarChart(productCounts) {
+    const canvas = document.getElementById("productBarChart");
+
+    if (!canvas) return;
+
+    const entries = Object.entries(productCounts).sort(function(a, b) {
+        return b[1] - a[1];
+    });
+
+    const labels = entries.map(function(entry) {
+        return entry[0];
+    });
+
+    const data = entries.map(function(entry) {
+        return entry[1];
+    });
+
+    const colors = getChartColors(labels.length);
+
+    if (productBarChart !== null) {
+        productBarChart.destroy();
+    }
+
+    productBarChart = new Chart(canvas, {
+        type: "bar",
+        data: {
+            labels: labels,
+            datasets: [{
+            label: "Number of times sold",
+            data: data,
+            backgroundColor: colors,
+            borderRadius: 4,
+            barThickness: 20
+        }]
+        },
+        options: {
+            indexAxis: "y",
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                title: {
+                    display: true,
+                    text: "Products Sold"
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return `${context.raw} sold`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                 x: {
+                     title: {
+                        display: true,
+                        text: "Number of times sold"
+                 },
+                beginAtZero: true,
+                ticks: {
+                    precision: 0
+                }
+            },
+            y: {
+                ticks: {
+                    autoSkip: false,
+                    font: {
+                        size: 12
+                    }
+                }
+            }
+        }
+        }
+    });
+}
+function getColorHex(colorName) {
+    const colorMap = {
+        "Red": "#dc2626",
+        "Pink": "#ec4899",
+        "Yellow": "#eab308",
+        "Purple": "#9333ea",
+        "Black": "#111827",
+        "Dark Green": "#166534",
+        "Light Green": "#22c55e",
+        "Transparent Green": "#86efac",
+        "White": "#f8fafc",
+        "Blue": "#2563eb",
+        "Cyan": "#06b6d4",
+        "Orange": "#f97316",
+        "Light Pink": "#f9a8d4",
+        "N/A": "#94a3b8"
+    };
+
+    return colorMap[colorName] || "#64748b";
+}
+function renderColorBarChart(colorCounts) {
+    const canvas = document.getElementById("colorBarChart");
+
+    if (!canvas) return;
+
+    const entries = Object.entries(colorCounts).sort(function(a, b) {
+        return b[1] - a[1];
+    });
+
+    const labels = entries.map(function(entry) {
+        return entry[0];
+    });
+
+    const data = entries.map(function(entry) {
+        return entry[1];
+    });
+
+    const colors = labels.map(function(label) {
+    return getColorHex(label);
+    });
+
+    if (colorBarChart !== null) {
+        colorBarChart.destroy();
+    }
+
+    colorBarChart = new Chart(canvas, {
+        type: "bar",
+        data: {
+            labels: labels,
+                datasets: [{
+                    label: "Number of times used",
+                    data: data,
+                    backgroundColor: colors,
+                    borderColor: "#334155",
+                    borderWidth: 1,
+                    borderRadius: 4,
+                    barThickness: 20
+                }]
+        },
+        options: {
+            indexAxis: "y",
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                title: {
+                    display: true,
+                    text: "Most Used Colors"
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return `${context.raw} uses`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: "Number of times used"
+                    },
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0
+                    }
+                },
+                y: {
+                    ticks: {
+                        autoSkip: false,
+                        font: {
+                            size: 12
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+function buildColorByProductStats() {
+    const container = document.getElementById("colorByProductStats");
+
+    if (!container) return;
+
+    container.innerHTML = "";
+
+    let productColorCounts = {};
+
+    sales.forEach(function(sale) {
+        if (!sale.color) return;
+
+        const colorEntries = sale.color.split(",");
+
+        colorEntries.forEach(function(entry) {
+            const parts = entry.split(":");
+
+            if (parts.length < 2) return;
+
+            let productName = parts[0].trim();
+            let colorName = parts[1].trim();
+
+            productName = productName.replace(/ #\d+$/, "");
+
+            if (!productColorCounts[productName]) {
+                productColorCounts[productName] = {};
+            }
+
+            if (productColorCounts[productName][colorName]) {
+                productColorCounts[productName][colorName]++;
+            } else {
+                productColorCounts[productName][colorName] = 1;
+            }
+        });
+    });
+
+    const productNames = Object.keys(productColorCounts);
+
+    if (productNames.length === 0) {
+        container.innerHTML = "<p>No color data yet.</p>";
+        return;
+    }
+
+    productNames.forEach(function(productName) {
+        const productCard = document.createElement("div");
+        productCard.classList.add("product-color-card");
+
+        const colors = productColorCounts[productName];
+
+        const sortedColors = Object.entries(colors).sort(function(a, b) {
+            return b[1] - a[1];
+        });
+
+        let colorPills = "";
+
+        sortedColors.forEach(function(colorEntry) {
+            const colorName = colorEntry[0];
+            const count = colorEntry[1];
+            const colorHex = getColorHex(colorName);
+
+            colorPills += `
+                <div class="color-pill">
+                    <span 
+                        class="color-dot" 
+                        style="background-color: ${colorHex};"
+                    ></span>
+
+                    <span class="color-pill-name">${colorName}</span>
+
+                    <span class="color-pill-count">${count}</span>
+                </div>
+            `;
+        });
+
+        productCard.innerHTML = `
+            <h3>${productName}</h3>
+            <div class="color-pill-list">
+                ${colorPills}
+            </div>
+        `;
+
+        container.appendChild(productCard);
+    });
+}
+function showRevenueTab(tabId) {
+    const revenueSections = document.querySelectorAll(".revenue-section");
+    const revenueButtons = document.querySelectorAll(".revenue-tabs button");
+
+    revenueSections.forEach(function(section) {
+        section.classList.remove("active-revenue-section");
+    });
+
+    revenueButtons.forEach(function(button) {
+        button.classList.remove("active-revenue-tab");
+    });
+
+    document.getElementById(tabId).classList.add("active-revenue-section");
+
+    const clickedButton = document.querySelector(
+        `.revenue-tabs button[onclick="showRevenueTab('${tabId}')"]`
+    );
+
+    if (clickedButton) {
+        clickedButton.classList.add("active-revenue-tab");
+    }
+
+    updateRevenueDashboard();
+}
 function updateRevenueDashboard() {
     const dashboardRevenue = document.getElementById("dashboardRevenue");
     const popularItem = document.getElementById("popularItem");
     const revenueTableBody = document.getElementById("revenueTableBody");
+    const monthlyStats = document.getElementById("monthlyStats");
 
     let total = 0;
-    let itemCounts = {};
+    let productCounts = {};
+    let colorCounts = {};
+    let monthlyTotals = {};
+    let sourceCounts = {};
 
     revenueTableBody.innerHTML = "";
+    monthlyStats.innerHTML = "";
 
     sales.forEach(function(sale) {
-        const saleTotal = sale.price;
-        total += saleTotal;
-
-        if (itemCounts[sale.item]) {
-            itemCounts[sale.item] += sale.quantity;
-        } else {
-            itemCounts[sale.item] = sale.quantity;
-        }
+        total += sale.price;
 
         const row = document.createElement("tr");
 
@@ -521,26 +870,302 @@ function updateRevenueDashboard() {
             <td>${sale.color}</td>
             <td>${sale.source}</td>
             <td>$${sale.price.toFixed(2)}</td>
-            <td>${sale.quantity}</td>
-            <td>$${saleTotal.toFixed(2)}</td>
         `;
 
         revenueTableBody.appendChild(row);
+
+        countProducts(sale.item, productCounts);
+        countColors(sale.color, colorCounts);
+        countMonthlySales(sale, monthlyTotals);
+        countSources(sale.source, sourceCounts);
     });
 
     dashboardRevenue.textContent = "$" + total.toFixed(2);
 
+    renderProductBarChart(productCounts);
+    renderColorBarChart(colorCounts);
+    buildColorByProductStats();
+    renderSourcePieChart(sourceCounts);
+
+    renderMonthlyStats(monthlyStats, monthlyTotals);
+
+    let topItem = getTopItem(productCounts);
+    popularItem.textContent = topItem;
+}
+function countSources(source, sourceCounts) {
+    if (!source) return;
+
+    if (sourceCounts[source]) {
+        sourceCounts[source]++;
+    } else {
+        sourceCounts[source] = 1;
+    }
+}
+function countProducts(itemText, productCounts) {
+    if (!itemText) return;
+
+    const items = itemText.split(",");
+
+    items.forEach(function(item) {
+        let cleanItem = item.trim();
+
+        const parts = cleanItem.split(" x");
+        const name = parts[0];
+        const quantity = Number(parts[1]) || 1;
+
+        if (productCounts[name]) {
+            productCounts[name] += quantity;
+        } else {
+            productCounts[name] = quantity;
+        }
+    });
+}
+
+function countColors(colorText, colorCounts) {
+    if (!colorText) return;
+
+    const colorEntries = colorText.split(",");
+
+    colorEntries.forEach(function(entry) {
+        const parts = entry.split(":");
+
+        if (parts.length < 2) return;
+
+        const color = parts[1].trim();
+
+        if (colorCounts[color]) {
+            colorCounts[color]++;
+        } else {
+            colorCounts[color] = 1;
+        }
+    });
+}
+
+function countMonthlySales(sale, monthlyTotals) {
+    const saleDate = new Date(sale.date);
+
+    if (isNaN(saleDate)) return;
+
+    const monthKey = saleDate.toLocaleString("default", {
+        month: "long",
+        year: "numeric"
+    });
+
+    if (monthlyTotals[monthKey]) {
+        monthlyTotals[monthKey] += sale.price;
+    } else {
+        monthlyTotals[monthKey] = sale.price;
+    }
+}
+
+function renderStats(container, statsObject) {
+    const entries = Object.entries(statsObject);
+
+    if (entries.length === 0) {
+        container.innerHTML = "<p>No data yet.</p>";
+        return;
+    }
+
+    entries.sort(function(a, b) {
+        return b[1] - a[1];
+    });
+
+    const maxValue = entries[0][1];
+
+    entries.forEach(function(entry) {
+        const name = entry[0];
+        const value = entry[1];
+        const percent = (value / maxValue) * 100;
+
+        const row = document.createElement("div");
+        row.classList.add("stat-row");
+
+        row.innerHTML = `
+            <div class="stat-label">${name}: ${value}</div>
+            <div class="stat-bar">
+                <div class="stat-fill" style="width: ${percent}%"></div>
+            </div>
+        `;
+
+        container.appendChild(row);
+    });
+}
+
+function renderMonthlyStats(container, monthlyTotals) {
+    container.innerHTML = "";
+
+    let monthlySales = {};
+
+    sales.forEach(function(sale) {
+        const saleDate = new Date(sale.date);
+
+        if (isNaN(saleDate)) return;
+
+        const monthKey = saleDate.toLocaleString("default", {
+            month: "long",
+            year: "numeric"
+        });
+
+        if (!monthlySales[monthKey]) {
+            monthlySales[monthKey] = [];
+        }
+
+        monthlySales[monthKey].push(sale);
+    });
+
+    const monthNames = Object.keys(monthlySales);
+
+    if (monthNames.length === 0) {
+        container.innerHTML = "<p>No monthly sales yet.</p>";
+        return;
+    }
+
+    monthNames.sort(function(a, b) {
+        return new Date(a) - new Date(b);
+    });
+
+    monthNames.forEach(function(monthName) {
+        const monthSales = monthlySales[monthName];
+
+        monthSales.sort(function(a, b) {
+            return new Date(a.date) - new Date(b.date);
+        });
+
+        let monthTotal = 0;
+
+        monthSales.forEach(function(sale) {
+            monthTotal += sale.price;
+        });
+
+        const monthCard = document.createElement("div");
+        monthCard.classList.add("month-card");
+
+        let saleRows = "";
+
+        monthSales.forEach(function(sale) {
+            saleRows += `
+                <div class="monthly-sale-row">
+                    <div>
+                        <strong>${sale.date}</strong>
+                        <p>${sale.item}</p>
+                        <p>${sale.color}</p>
+                        <p>${sale.source}</p>
+                    </div>
+
+                    <div class="monthly-sale-price">
+                        $${sale.price.toFixed(2)}
+                    </div>
+                </div>
+            `;
+        });
+
+        monthCard.innerHTML = `
+    <button class="month-toggle" type="button">
+        <span>${monthName}</span>
+        <span>$${monthTotal.toFixed(2)}</span>
+    </button>
+
+    <div class="month-details">
+        <button type="button" class="plain-report-btn">
+            Open Plain Report
+        </button>
+
+        ${saleRows}
+    </div>
+`;
+
+        const toggleButton = monthCard.querySelector(".month-toggle");
+        const details = monthCard.querySelector(".month-details");
+        const reportButton = monthCard.querySelector(".plain-report-btn");
+
+reportButton.addEventListener("click", function() {
+    openMonthlyPlainReport(monthName, monthSales, monthTotal);
+});
+
+        toggleButton.addEventListener("click", function() {
+            details.classList.toggle("open");
+            toggleButton.classList.toggle("open");
+        });
+
+        container.appendChild(monthCard);
+    });
+}
+function openMonthlyPlainReport(monthName, monthSales, monthTotal) {
+    let reportText = "";
+
+    reportText += `${monthName} Sales Report\n`;
+    reportText += `Total Revenue: $${monthTotal.toFixed(2)}\n`;
+    reportText += "----------------------------------------\n\n";
+
+    monthSales.forEach(function(sale) {
+        reportText += `Date: ${sale.date}\n`;
+        reportText += `Items: ${sale.item}\n`;
+        reportText += `Colors: ${sale.color}\n`;
+        reportText += `Source: ${sale.source}\n`;
+        reportText += `Total Paid: $${sale.price.toFixed(2)}\n`;
+        reportText += "----------------------------------------\n\n";
+    });
+
+    const reportWindow = window.open("", "_blank");
+
+    reportWindow.document.write(`
+        <pre>${reportText}</pre>
+    `);
+
+    reportWindow.document.close();
+}
+
+function getTopItem(productCounts) {
     let topItem = "No sales yet";
     let highestCount = 0;
 
-    for (let item in itemCounts) {
-        if (itemCounts[item] > highestCount) {
-            highestCount = itemCounts[item];
+    for (let item in productCounts) {
+        if (productCounts[item] > highestCount) {
+            highestCount = productCounts[item];
             topItem = item;
         }
     }
 
-    popularItem.textContent = topItem;
+    return topItem;
+}
+function filterSalesByDate() {
+    const startDateInput = document.getElementById("filterStartDate").value;
+    const endDateInput = document.getElementById("filterEndDate").value;
+    const filteredSalesBody = document.getElementById("filteredSalesBody");
+
+    filteredSalesBody.innerHTML = "";
+
+    if (startDateInput === "" || endDateInput === "") {
+        alert("Please choose both a start date and an end date.");
+        return;
+    }
+
+    const startDate = new Date(startDateInput);
+    const endDate = new Date(endDateInput);
+
+    sales.forEach(function(sale) {
+        const saleDate = new Date(sale.date);
+
+        if (saleDate >= startDate && saleDate <= endDate) {
+            const row = document.createElement("tr");
+
+            row.innerHTML = `
+                <td>${sale.date}</td>
+                <td>${sale.item}</td>
+                <td>${sale.color}</td>
+                <td>${sale.source}</td>
+                <td>$${sale.price.toFixed(2)}</td>
+            `;
+
+            filteredSalesBody.appendChild(row);
+        }
+    });
+}
+
+function clearSalesFilter() {
+    document.getElementById("filterStartDate").value = "";
+    document.getElementById("filterEndDate").value = "";
+    document.getElementById("filteredSalesBody").innerHTML = "";
 }
 function updateColorQuestions() {
     const colorSection = document.getElementById("colorSection");
@@ -685,7 +1310,7 @@ saleForm.addEventListener("submit", function(event) {
     displaySales();
 
     saleForm.reset();
-    moneyDigits = "";
+    moneyValue = "";
     buildSalesForm();
 });
 

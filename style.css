@@ -498,3 +498,272 @@ select option {
     font-size: 1rem;
     padding: 12px;
 }
+.revenue-tabs {
+    display: flex;
+    gap: 28px;
+    margin-top: 20px;
+    padding-bottom: 0;
+    border-bottom: 2px solid #111827;
+}
+
+.revenue-tabs button {
+    background: none;
+    color: #64748b;
+    border: none;
+    padding: 12px 0;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 0;
+    transition: all 0.2s ease;
+}
+
+.revenue-tabs button:hover {
+    color: #111827;
+    transform: translateY(-1px);
+}
+
+.revenue-tabs button.active-revenue-tab {
+    color: #111827;
+    font-size: 1.12rem;
+    font-weight: 800;
+    transform: translateY(-2px);
+}
+
+.revenue-section {
+    display: none;
+    padding-top: 22px;
+}
+
+.active-revenue-section {
+    display: block;
+}
+
+.stat-row {
+    background: #f8fafc;
+    border: 1px solid #dbe3ee;
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 10px;
+}
+
+.stat-label {
+    font-weight: bold;
+}
+
+.stat-bar {
+    height: 14px;
+    background: #dbeafe;
+    border-radius: 20px;
+    margin-top: 8px;
+    overflow: hidden;
+}
+
+.stat-fill {
+    height: 100%;
+    background: #2563eb;
+    border-radius: 20px;
+}
+.chart-container {
+    max-width: 750px;
+    margin: 20px auto;
+}
+.single-chart-container {
+    width: 100%;
+    max-width: 100%;
+    height: 650px;
+    overflow-x: hidden;
+    margin-top: 20px;
+}
+
+.single-chart-container canvas {
+    max-width: 100%;
+}
+
+@media (max-width: 700px) {
+    .single-chart-container {
+        height: 700px;
+    }
+}
+#colorByProductStats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 18px;
+}
+
+.product-color-card {
+    background: #f8fafc;
+    border: 1px solid #dbe3ee;
+    border-radius: 16px;
+    padding: 18px;
+}
+
+.product-color-card h3 {
+    margin-top: 0;
+    margin-bottom: 14px;
+    color: #1e293b;
+}
+
+.color-pill-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.color-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: white;
+    border: 1px solid #dbe3ee;
+    border-radius: 999px;
+    padding: 8px 12px;
+    font-weight: 600;
+}
+
+.color-dot {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 1px solid #94a3b8;
+    flex-shrink: 0;
+}
+
+.color-pill-count {
+    background: #e2e8f0;
+    color: #1e293b;
+    border-radius: 999px;
+    padding: 3px 8px;
+    font-size: 0.85rem;
+}
+.source-chart-container {
+    width: 100%;
+    max-width: 650px;
+    height: 380px;
+    margin: 20px auto;
+}
+
+@media (max-width: 700px) {
+    .source-chart-container {
+        height: 320px;
+    }
+}
+.totals-top-row {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: 20px;
+    align-items: stretch;
+}
+
+.total-revenue-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.total-revenue-card #dashboardRevenue {
+    font-size: 2.8rem;
+    font-weight: 800;
+    margin: 10px 0 0;
+}
+
+.source-chart-card {
+    overflow: hidden;
+}
+
+.source-chart-container {
+    width: 100%;
+    height: 260px;
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+.source-chart-container canvas {
+    max-width: 100%;
+}
+
+@media (max-width: 800px) {
+    .totals-top-row {
+        grid-template-columns: 1fr;
+    }
+
+    .source-chart-container {
+        height: 260px;
+    }
+}
+.month-card {
+    border: 1px solid #dbe3ee;
+    border-radius: 14px;
+    margin-bottom: 14px;
+    overflow: hidden;
+    background: #f8fafc;
+}
+
+.month-toggle {
+    width: 100%;
+    background: white;
+    color: #1e293b;
+    border: none;
+    border-radius: 0;
+    padding: 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.1rem;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.month-toggle:hover {
+    background: #f1f5f9;
+}
+
+.month-toggle.open {
+    border-bottom: 1px solid #dbe3ee;
+}
+
+.month-details {
+    display: none;
+    padding: 14px;
+}
+
+.month-details.open {
+    display: block;
+}
+
+.monthly-sale-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 10px;
+}
+
+.monthly-sale-row p {
+    margin: 5px 0;
+    color: #475569;
+}
+
+.monthly-sale-price {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #166534;
+    white-space: nowrap;
+}
+
+@media (max-width: 700px) {
+    .monthly-sale-row {
+        flex-direction: column;
+    }
+
+    .monthly-sale-price {
+        align-self: flex-start;
+    }
+}
+.plain-report-btn {
+    margin-bottom: 14px;
+    background-color: #111827;
+}

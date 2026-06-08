@@ -25,6 +25,7 @@
     <div class="home-card">
         <h1>Welcome</h1>
         <p>This app helps small 3D printing businesses quickly track sales, revenue, and product performance.</p>
+        <p>*This is a placeholder page until the actual content is implemented.</p>
 
         <button>Sign In</button>
         <button>About</button>
@@ -88,34 +89,132 @@
 
 </section>
 <section id="revenuePage" class="page">
+
     <div class="summary-box">
         <h2>Revenue Dashboard</h2>
-        <p>Total Revenue:</p>
+        <p>View sales totals, timestamps, product trends, color trends, and filtered reports.</p>
+
+        <div class="revenue-tabs">
+            <button type="button" class="active-revenue-tab" onclick="showRevenueTab('totalsTab')">Totals / Timestamps</button>
+            <button type="button" onclick="showRevenueTab('productsTab')">Popular Products</button>
+            <button type="button" onclick="showRevenueTab('colorsTab')">Popular Colors</button>
+            <button type="button" onclick="showRevenueTab('monthlyTab')">Monthly Sales</button>
+            <button type="button" onclick="showRevenueTab('filterTab')">Search / Filter</button>
+        </div>
+    </div>
+
+    <div id="totalsTab" class="revenue-section active-revenue-section">
+        <div class="totals-top-row">
+
+    <div class="summary-box total-revenue-card">
+        <h2>Total Revenue</h2>
         <p id="dashboardRevenue">$0.00</p>
-
-        <p>Most Popular Item:</p>
-        <p id="popularItem">No sales yet</p>
     </div>
 
-    <div class="table-box">
-        <h2>Sale Timestamps</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Item</th>
-                    <th>Price</th>
-                    <th>Quantity</th>
-                    <th>Total</th>
-                </tr>
-            </thead>
+    <div class="summary-box source-chart-card">
+        <h2>Sales by Source</h2>
+        <p>See where purchases are coming from.</p>
 
-            <tbody id="revenueTableBody">
-            </tbody>
-        </table>
+        <div class="source-chart-container">
+            <canvas id="sourcePieChart"></canvas>
+        </div>
     </div>
+
+</div>
+
+        <div class="table-box">
+            <h2>Sales Timestamps</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Items</th>
+                        <th>Colors</th>
+                        <th>Source</th>
+                        <th>Total Paid</th>
+                    </tr>
+                </thead>
+
+                <tbody id="revenueTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="productsTab" class="revenue-section">
+    <div class="summary-box">
+        <h2>Popular Products</h2>
+        <p>See which products are selling the most.</p>
+
+        <div class="single-chart-container">
+            <canvas id="productBarChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<div id="colorsTab" class="revenue-section">
+    <div class="summary-box">
+        <h2>Popular Colors</h2>
+        <p>See which filament colors are being selected most often.</p>
+
+        <div class="single-chart-container">
+            <canvas id="colorBarChart"></canvas>
+        </div>
+    </div>
+
+    <div class="summary-box">
+        <h2>Colors by Product</h2>
+        <p>See which colors are most commonly used for each product.</p>
+
+        <div id="colorByProductStats"></div>
+    </div>
+</div>
+
+    <div id="monthlyTab" class="revenue-section">
+    <div class="summary-box">
+        <h2>Monthly Sales</h2>
+        <p>Click a month to view all sales from that month in order.</p>
+
+        <div id="monthlyStats"></div>
+    </div>
+</div>
+
+    <div id="filterTab" class="revenue-section">
+        <div class="summary-box">
+            <h2>Search Sales by Date</h2>
+
+            <label>Start Date</label>
+            <input type="date" id="filterStartDate">
+
+            <label>End Date</label>
+            <input type="date" id="filterEndDate">
+
+            <button type="button" onclick="filterSalesByDate()">Search</button>
+            <button type="button" onclick="clearSalesFilter()">Clear</button>
+        </div>
+
+        <div class="table-box">
+            <h2>Filtered Results</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Items</th>
+                        <th>Colors</th>
+                        <th>Source</th>
+                        <th>Total Paid</th>
+                    </tr>
+                </thead>
+
+                <tbody id="filteredSalesBody"></tbody>
+            </table>
+        </div>
+    </div>
+
 </section>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="script.js"></script>
 
 </body>
