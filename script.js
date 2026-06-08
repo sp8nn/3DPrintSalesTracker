@@ -1,8 +1,8 @@
 const saleForm = document.getElementById("saleForm");
 const salesTableBody = document.getElementById("salesTableBody");
 
-const SUPABASE_URL = "PASTE_PROJECT_URL_HERE";
-const SUPABASE_ANON_KEY = "PASTE_ANON_PUBLIC_KEY_HERE";
+const SUPABASE_URL = "https://tyjfiwkzjcmtgdjqjopf.supabase.co/rest/v1/";
+const SUPABASE_ANON_KEY = "sb_publishable_G6Di7nwj7URul5MTnYl9Gw_O5mRayl4";
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
