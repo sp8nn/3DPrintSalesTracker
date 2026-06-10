@@ -45,12 +45,20 @@
             <button type="submit">Add Sale</button>
 
         </form>
+        <div id="saleSuccessMessage" class="success-message hidden">
+            <h2>Sale Submitted!</h2>
+            <p>Your sale was saved successfully.</p>
 
-    </div>
+            <button type="button" onclick="resetSaleFormView()">
+                Add Another Sale
+            </button>
+        </div>
 
     <div class="table-box">
 
         <h2>Sales History</h2>
+
+        <div class="table-scroll">
 
         <table>
 
@@ -73,15 +81,22 @@
 
     </div>
 
+    <div id="salesPagination" class="pagination-controls"></div>
+
+    </div>
+
 </section>
 
 <section id="settingsPage" class="page">
 
     <div class="customize-box">
 
-        <h2>Settings</h2>
+        <h2>Form Builder</h2>
+        <p>Edit the sales form questions, question types, options, and order.</p>
 
-        <p>Edit the questions and dropdown choices used in the Sales form.</p>
+        <button type="button" onclick="addNewQuestion()" class="add-question-btn">
+            Add New Question
+        </button>
 
         <div id="questionSettingsContainer"></div>
 
@@ -94,90 +109,97 @@
         <h2>Revenue Dashboard</h2>
         <p>View sales totals, timestamps, product trends, color trends, and filtered reports.</p>
 
-        <div class="revenue-tabs">
-            <button type="button" class="active-revenue-tab" onclick="showRevenueTab('totalsTab')">Totals / Timestamps</button>
-            <button type="button" onclick="showRevenueTab('productsTab')">Popular Products</button>
-            <button type="button" onclick="showRevenueTab('colorsTab')">Popular Colors</button>
-            <button type="button" onclick="showRevenueTab('monthlyTab')">Monthly Sales</button>
-            <button type="button" onclick="showRevenueTab('filterTab')">Search / Filter</button>
+        <div class="revenue-tabs-scroll">
+            <div class="revenue-tabs">
+                <button type="button" class="active-revenue-tab" onclick="showRevenueTab('totalsTab')">Totals / Timestamps</button>
+                <button type="button" onclick="showRevenueTab('productsTab')">Popular Products</button>
+                <button type="button" onclick="showRevenueTab('colorsTab')">Popular Colors</button>
+                <button type="button" onclick="showRevenueTab('monthlyTab')">Monthly Sales</button>
+                <button type="button" onclick="showRevenueTab('filterTab')">Search / Filter</button>
+            </div>
         </div>
     </div>
 
     <div id="totalsTab" class="revenue-section active-revenue-section">
+
         <div class="totals-top-row">
+            <div class="summary-box total-revenue-card">
+                <h2>Total Revenue</h2>
+                <p id="dashboardRevenue">$0.00</p>
+            </div>
 
-    <div class="summary-box total-revenue-card">
-        <h2>Total Revenue</h2>
-        <p id="dashboardRevenue">$0.00</p>
-    </div>
+            <div class="summary-box source-chart-card">
+                <h2>Sales by Source</h2>
+                <p>See where purchases are coming from.</p>
 
-    <div class="summary-box source-chart-card">
-        <h2>Sales by Source</h2>
-        <p>See where purchases are coming from.</p>
-
-        <div class="source-chart-container">
-            <canvas id="sourcePieChart"></canvas>
+                <div class="source-chart-container">
+                    <canvas id="sourcePieChart"></canvas>
+                </div>
+            </div>
         </div>
-    </div>
-
-</div>
 
         <div class="table-box">
             <h2>Sales Timestamps</h2>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Items</th>
-                        <th>Colors</th>
-                        <th>Source</th>
-                        <th>Total Paid</th>
-                    </tr>
-                </thead>
+            <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Items</th>
+                            <th>Colors</th>
+                            <th>Source</th>
+                            <th>Total Paid</th>
+                        </tr>
+                    </thead>
 
-                <tbody id="revenueTableBody"></tbody>
-            </table>
+                    <tbody id="revenueTableBody"></tbody>
+                </table>
+                <div id="revenuePagination" class="pagination-controls"></div>
+            </div>
         </div>
+
     </div>
 
     <div id="productsTab" class="revenue-section">
-    <div class="summary-box">
-        <h2>Popular Products</h2>
-        <p>See which products are selling the most.</p>
+        <div class="summary-box">
+            <h2>Popular Products</h2>
+            <p>See which products are selling the most.</p>
 
-        <div class="single-chart-container">
-            <canvas id="productBarChart"></canvas>
-        </div>
-    </div>
-</div>
+            <div class="single-chart-container">
+                <canvas id="productBarChart"></canvas>
+            </div>
 
-<div id="colorsTab" class="revenue-section">
-    <div class="summary-box">
-        <h2>Popular Colors</h2>
-        <p>See which filament colors are being selected most often.</p>
-
-        <div class="single-chart-container">
-            <canvas id="colorBarChart"></canvas>
+            <p id="popularItem">No sales yet</p>
         </div>
     </div>
 
-    <div class="summary-box">
-        <h2>Colors by Product</h2>
-        <p>See which colors are most commonly used for each product.</p>
+    <div id="colorsTab" class="revenue-section">
+        <div class="summary-box">
+            <h2>Popular Colors</h2>
+            <p>See which filament colors are being selected most often.</p>
 
-        <div id="colorByProductStats"></div>
+            <div class="single-chart-container">
+                <canvas id="colorBarChart"></canvas>
+            </div>
+        </div>
+
+        <div class="summary-box">
+            <h2>Colors by Product</h2>
+            <p>See which colors are most commonly used for each product.</p>
+
+            <div id="colorByProductStats"></div>
+        </div>
     </div>
-</div>
 
     <div id="monthlyTab" class="revenue-section">
-    <div class="summary-box">
-        <h2>Monthly Sales</h2>
-        <p>Click a month to view all sales from that month in order.</p>
+        <div class="summary-box">
+            <h2>Monthly Sales</h2>
+            <p>Click a month to view all sales from that month in order.</p>
 
-        <div id="monthlyStats"></div>
+            <div id="monthlyStats"></div>
+        </div>
     </div>
-</div>
 
     <div id="filterTab" class="revenue-section">
         <div class="summary-box">
@@ -196,19 +218,21 @@
         <div class="table-box">
             <h2>Filtered Results</h2>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Items</th>
-                        <th>Colors</th>
-                        <th>Source</th>
-                        <th>Total Paid</th>
-                    </tr>
-                </thead>
+            <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Items</th>
+                            <th>Colors</th>
+                            <th>Source</th>
+                            <th>Total Paid</th>
+                        </tr>
+                    </thead>
 
-                <tbody id="filteredSalesBody"></tbody>
-            </table>
+                    <tbody id="filteredSalesBody"></tbody>
+                </table>
+            </div>
         </div>
     </div>
 

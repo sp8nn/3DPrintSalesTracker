@@ -5,8 +5,12 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const saleForm = document.getElementById("saleForm");
 const salesTableBody = document.getElementById("salesTableBody");
+const salesPerPage = 10;
+const revenueSalesPerPage = 10;
 
 let sales = [];
+let currentSalesPage = 1;
+let currentRevenuePage = 1;
 let productBarChart = null;
 let colorBarChart = null;
 let sourcePieChart = null;
@@ -285,7 +289,15 @@ function buildSettingsForm() {
         settingsCard.classList.add("settings-card");
 
         settingsCard.innerHTML = `
-            <h3>Question ${questionIndex + 1}</h3>
+            <div class="settings-card-header">
+                <h3>Question ${questionIndex + 1}</h3>
+
+                <div class="settings-card-actions">
+                    <button type="button" onclick="moveQuestionUp(${questionIndex})">↑</button>
+                    <button type="button" onclick="moveQuestionDown(${questionIndex})">↓</button>
+                    <button type="button" class="small-delete-btn" onclick="deleteQuestion(${questionIndex})">Delete</button>
+                </div>
+            </div>
 
             <label>Question Text</label>
             <input
@@ -294,115 +306,170 @@ function buildSettingsForm() {
                 oninput="updateQuestionText(${questionIndex}, this.value)"
             >
 
-            <p><strong>Type:</strong> ${question.type}</p>
+            <label>Question Type</label>
+            <select class="big-select" onchange="updateQuestionType(${questionIndex}, this.value)">
+                <option value="dropdown" ${question.type === "dropdown" ? "selected" : ""}>Dropdown</option>
+                <option value="multiImageChoice" ${question.type === "multiImageChoice" ? "selected" : ""}>Multi Image Choice</option>
+                <option value="moneyKeypad" ${question.type === "moneyKeypad" ? "selected" : ""}>Money Keypad</option>
+                <option value="number" ${question.type === "number" ? "selected" : ""}>Number</option>
+            </select>
+
+            <div class="settings-option-area" id="settings-options-${questionIndex}"></div>
         `;
 
-        if (question.type === "dropdown") {
-            question.options.forEach(function(option, optionIndex) {
-                const optionRow = document.createElement("div");
-                optionRow.classList.add("settings-option-row");
+        settingsContainer.appendChild(settingsCard);
 
-                optionRow.innerHTML = `
-                    <input
-                        type="text"
-                        value="${option}"
-                        oninput="updateOptionText(${questionIndex}, ${optionIndex}, this.value)"
-                    >
+        buildQuestionOptionsEditor(question, questionIndex);
+    });
+}
+function buildQuestionOptionsEditor(question, questionIndex) {
+    const optionArea = document.getElementById(`settings-options-${questionIndex}`);
 
-                    <button
-                        type="button"
-                        class="small-delete-btn"
-                        onclick="removeQuestionOption(${questionIndex}, ${optionIndex})"
-                    >
-                        Remove
-                    </button>
-                `;
+    optionArea.innerHTML = "";
 
-                settingsCard.appendChild(optionRow);
-            });
+    if (question.type === "moneyKeypad" || question.type === "number") {
+        optionArea.innerHTML = `
+            <p class="helper-text">This question type does not need answer options.</p>
+        `;
+        return;
+    }
 
-            const addRow = document.createElement("div");
-            addRow.classList.add("settings-option-row");
+    optionArea.innerHTML = `<h4>Answer Options</h4>`;
 
-            addRow.innerHTML = `
-                <input
-                    type="text"
-                    id="newOption-${questionIndex}"
-                    placeholder="New option"
-                >
-
-                <button
-                    type="button"
-                    onclick="addQuestionOption(${questionIndex})"
-                >
-                    Add Option
-                </button>
-            `;
-
-            settingsCard.appendChild(addRow);
-        }
+    question.options.forEach(function(option, optionIndex) {
+        const optionRow = document.createElement("div");
+        optionRow.classList.add("settings-option-row");
 
         if (question.type === "multiImageChoice") {
-            question.options.forEach(function(option, optionIndex) {
-                const optionRow = document.createElement("div");
-                optionRow.classList.add("settings-option-row");
-
-                optionRow.innerHTML = `
-                    <input
-                        type="text"
-                        value="${option.name}"
-                        placeholder="Option name"
-                        oninput="updateImageOptionName(${questionIndex}, ${optionIndex}, this.value)"
-                    >
-
-                    <input
-                        type="text"
-                        value="${option.image}"
-                        placeholder="Image URL"
-                        oninput="updateImageOptionURL(${questionIndex}, ${optionIndex}, this.value)"
-                    >
-
-                    <button
-                        type="button"
-                        class="small-delete-btn"
-                        onclick="removeQuestionOption(${questionIndex}, ${optionIndex})"
-                    >
-                        Remove
-                    </button>
-                `;
-
-                settingsCard.appendChild(optionRow);
-            });
-
-            const addRow = document.createElement("div");
-            addRow.classList.add("settings-option-row");
-
-            addRow.innerHTML = `
+            optionRow.innerHTML = `
                 <input
                     type="text"
-                    id="newImageOptionName-${questionIndex}"
-                    placeholder="New product name"
+                    value="${option.name}"
+                    placeholder="Option name"
+                    oninput="updateImageOptionName(${questionIndex}, ${optionIndex}, this.value)"
                 >
 
                 <input
                     type="text"
-                    id="newImageOptionURL-${questionIndex}"
-                    placeholder="Image URL optional"
+                    value="${option.image}"
+                    placeholder="Image URL"
+                    oninput="updateImageOptionURL(${questionIndex}, ${optionIndex}, this.value)"
                 >
 
-                <button
-                    type="button"
-                    onclick="addImageQuestionOption(${questionIndex})"
-                >
-                    Add Product
+                <button type="button" class="small-delete-btn" onclick="removeQuestionOption(${questionIndex}, ${optionIndex})">
+                    Remove
                 </button>
             `;
+        } else {
+            optionRow.innerHTML = `
+                <input
+                    type="text"
+                    value="${option}"
+                    placeholder="Option text"
+                    oninput="updateOptionText(${questionIndex}, ${optionIndex}, this.value)"
+                >
 
-            settingsCard.appendChild(addRow);
+                <button type="button" class="small-delete-btn" onclick="removeQuestionOption(${questionIndex}, ${optionIndex})">
+                    Remove
+                </button>
+            `;
         }
 
-        settingsContainer.appendChild(settingsCard);
+        optionArea.appendChild(optionRow);
     });
+
+    const addRow = document.createElement("div");
+    addRow.classList.add("settings-option-row");
+
+    if (question.type === "multiImageChoice") {
+        addRow.innerHTML = `
+            <input type="text" id="newImageOptionName-${questionIndex}" placeholder="New option name">
+            <input type="text" id="newImageOptionURL-${questionIndex}" placeholder="Image URL optional">
+
+            <button type="button" onclick="addImageQuestionOption(${questionIndex})">
+                Add Option
+            </button>
+        `;
+    } else {
+        addRow.innerHTML = `
+            <input type="text" id="newOption-${questionIndex}" placeholder="New option">
+
+            <button type="button" onclick="addQuestionOption(${questionIndex})">
+                Add Option
+            </button>
+        `;
+    }
+
+    optionArea.appendChild(addRow);
+}
+function updateQuestionType(questionIndex, newType) {
+    formQuestions[questionIndex].type = newType;
+
+    if (newType === "multiImageChoice") {
+        formQuestions[questionIndex].options = [
+            { name: "New Option", image: "" }
+        ];
+    } else if (newType === "dropdown") {
+        formQuestions[questionIndex].options = ["New Option"];
+    } else {
+        formQuestions[questionIndex].options = [];
+    }
+
+    saveFormQuestions();
+    buildSalesForm();
+    buildSettingsForm();
+}
+
+function moveQuestionUp(questionIndex) {
+    if (questionIndex === 0) return;
+
+    const question = formQuestions.splice(questionIndex, 1)[0];
+    formQuestions.splice(questionIndex - 1, 0, question);
+
+    saveFormQuestions();
+    buildSalesForm();
+    buildSettingsForm();
+}
+
+function moveQuestionDown(questionIndex) {
+    if (questionIndex === formQuestions.length - 1) return;
+
+    const question = formQuestions.splice(questionIndex, 1)[0];
+    formQuestions.splice(questionIndex + 1, 0, question);
+
+    saveFormQuestions();
+    buildSalesForm();
+    buildSettingsForm();
+}
+
+function deleteQuestion(questionIndex) {
+
+    const confirmed = confirm(
+        `Are you sure you want to delete "${formQuestions[questionIndex].question}"?\n\nThis action cannot be undone.`
+    );
+
+    if (!confirmed) {
+        return;
+    }
+
+    formQuestions.splice(questionIndex, 1);
+
+    saveFormQuestions();
+    buildSalesForm();
+    buildSettingsForm();
+}
+
+function addNewQuestion() {
+    formQuestions.push({
+        id: "question" + Date.now(),
+        question: "New Question",
+        type: "dropdown",
+        options: ["New Option"]
+    });
+
+    saveFormQuestions();
+    buildSalesForm();
+    buildSettingsForm();
 }
 
 function updateQuestionText(questionIndex, newText) {
@@ -466,6 +533,15 @@ function addImageQuestionOption(questionIndex) {
 }
 
 function removeQuestionOption(questionIndex, optionIndex) {
+
+    const confirmed = confirm(
+        "Are you sure you want to delete this option?"
+    );
+
+    if (!confirmed) {
+        return;
+    }
+
     formQuestions[questionIndex].options.splice(optionIndex, 1);
 
     saveFormQuestions();
@@ -496,7 +572,12 @@ function getSelectedProducts() {
 function displaySales() {
     salesTableBody.innerHTML = "";
 
-    sales.forEach(function(sale, index) {
+    const startIndex = (currentSalesPage - 1) * salesPerPage;
+    const endIndex = startIndex + salesPerPage;
+    const salesToShow = sales.slice(startIndex, endIndex);
+
+    salesToShow.forEach(function(sale, index) {
+        const actualIndex = startIndex + index;
         const saleTotal = sale.price;
         const row = document.createElement("tr");
 
@@ -509,7 +590,7 @@ function displaySales() {
             <td>${sale.quantity}</td>
             <td>$${saleTotal.toFixed(2)}</td>
             <td>
-                <button class="delete-btn" onclick="deleteSale(${index})">
+                <button class="delete-btn" onclick="deleteSale(${actualIndex})">
                     Delete
                 </button>
             </td>
@@ -517,13 +598,55 @@ function displaySales() {
 
         salesTableBody.appendChild(row);
     });
+
+    renderSalesPagination();
+}
+function renderSalesPagination() {
+    const pagination = document.getElementById("salesPagination");
+
+    if (!pagination) return;
+
+    const totalPages = Math.ceil(sales.length / salesPerPage);
+
+    if (totalPages <= 1) {
+        pagination.innerHTML = "";
+        return;
+    }
+
+    pagination.innerHTML = `
+        <button type="button" onclick="changeSalesPage(${currentSalesPage - 1})" ${currentSalesPage === 1 ? "disabled" : ""}>
+            Previous
+        </button>
+
+        <span>Page ${currentSalesPage} of ${totalPages}</span>
+
+        <button type="button" onclick="changeSalesPage(${currentSalesPage + 1})" ${currentSalesPage === totalPages ? "disabled" : ""}>
+            Next
+        </button>
+    `;
+}
+
+function changeSalesPage(pageNumber) {
+    const totalPages = Math.ceil(sales.length / salesPerPage);
+
+    if (pageNumber < 1 || pageNumber > totalPages) return;
+
+    currentSalesPage = pageNumber;
+    displaySales();
 }
 
 async function deleteSale(index) {
+
     const saleToDelete = sales[index];
 
-    if (!saleToDelete.id) {
-        alert("This sale does not have a cloud ID yet.");
+    const confirmed = confirm(
+        `Are you sure you want to delete this sale?\n\n` +
+        `${saleToDelete.item}\n` +
+        `${saleToDelete.date}\n\n` +
+        `This action cannot be undone.`
+    );
+
+    if (!confirmed) {
         return;
     }
 
@@ -534,13 +657,23 @@ async function deleteSale(index) {
 
     if (error) {
         console.error("Error deleting sale:", error);
-        alert("Could not delete sale from Supabase.");
+        alert("Could not delete sale.");
         return;
     }
 
     sales.splice(index, 1);
+
     displaySales();
     updateRevenueDashboard();
+
+    // Optional: keep pagination valid after deletion
+    const totalPages = Math.max(1, Math.ceil(sales.length / salesPerPage));
+
+    if (currentSalesPage > totalPages) {
+        currentSalesPage = totalPages;
+    }
+
+    displaySales();
 }
 function getChartColors(count) {
     const colors = [
@@ -894,7 +1027,6 @@ function showRevenueTab(tabId) {
 function updateRevenueDashboard() {
     const dashboardRevenue = document.getElementById("dashboardRevenue");
     const popularItem = document.getElementById("popularItem");
-    const revenueTableBody = document.getElementById("revenueTableBody");
     const monthlyStats = document.getElementById("monthlyStats");
 
     let total = 0;
@@ -903,12 +1035,42 @@ function updateRevenueDashboard() {
     let monthlyTotals = {};
     let sourceCounts = {};
 
-    revenueTableBody.innerHTML = "";
-    monthlyStats.innerHTML = "";
-
     sales.forEach(function(sale) {
         total += sale.price;
 
+        countProducts(sale.item, productCounts);
+        countColors(sale.color, colorCounts);
+        countMonthlySales(sale, monthlyTotals);
+        countSources(sale.source, sourceCounts);
+    });
+     renderRevenueTimestampPage();
+
+    dashboardRevenue.textContent = "$" + total.toFixed(2);
+
+    renderProductBarChart(productCounts);
+    renderColorBarChart(colorCounts);
+    buildColorByProductStats();
+    renderSourcePieChart(sourceCounts);
+    renderMonthlyStats(monthlyStats, monthlyTotals);
+
+    let topItem = getTopItem(productCounts);
+
+    if (popularItem) {
+        popularItem.textContent = topItem;
+    }
+}
+function renderRevenueTimestampPage() {
+    const revenueTableBody = document.getElementById("revenueTableBody");
+
+    if (!revenueTableBody) return;
+
+    revenueTableBody.innerHTML = "";
+
+    const startIndex = (currentRevenuePage - 1) * revenueSalesPerPage;
+    const endIndex = startIndex + revenueSalesPerPage;
+    const salesToShow = sales.slice(startIndex, endIndex);
+
+    salesToShow.forEach(function(sale) {
         const row = document.createElement("tr");
 
         row.innerHTML = `
@@ -920,25 +1082,45 @@ function updateRevenueDashboard() {
         `;
 
         revenueTableBody.appendChild(row);
-
-        countProducts(sale.item, productCounts);
-        countColors(sale.color, colorCounts);
-        countMonthlySales(sale, monthlyTotals);
-        countSources(sale.source, sourceCounts);
     });
 
-    dashboardRevenue.textContent = "$" + total.toFixed(2);
-
-    renderProductBarChart(productCounts);
-    renderColorBarChart(colorCounts);
-    buildColorByProductStats();
-    renderSourcePieChart(sourceCounts);
-
-    renderMonthlyStats(monthlyStats, monthlyTotals);
-
-    let topItem = getTopItem(productCounts);
-    popularItem.textContent = topItem;
+    renderRevenuePagination();
 }
+
+function renderRevenuePagination() {
+    const pagination = document.getElementById("revenuePagination");
+
+    if (!pagination) return;
+
+    const totalPages = Math.ceil(sales.length / revenueSalesPerPage);
+
+    if (totalPages <= 1) {
+        pagination.innerHTML = "";
+        return;
+    }
+
+    pagination.innerHTML = `
+        <button type="button" onclick="changeRevenuePage(${currentRevenuePage - 1})" ${currentRevenuePage === 1 ? "disabled" : ""}>
+            Previous
+        </button>
+
+        <span>Page ${currentRevenuePage} of ${totalPages}</span>
+
+        <button type="button" onclick="changeRevenuePage(${currentRevenuePage + 1})" ${currentRevenuePage === totalPages ? "disabled" : ""}>
+            Next
+        </button>
+    `;
+}
+
+function changeRevenuePage(pageNumber) {
+    const totalPages = Math.ceil(sales.length / revenueSalesPerPage);
+
+    if (pageNumber < 1 || pageNumber > totalPages) return;
+
+    currentRevenuePage = pageNumber;
+    renderRevenueTimestampPage();
+}
+
 function countSources(source, sourceCounts) {
     if (!source) return;
 
@@ -1315,6 +1497,23 @@ function backspaceMoney() {
     moneyValue = moneyValue.slice(0, -1);
     updateMoneyDisplay();
 }
+function showSaleSuccessMessage() {
+    saleForm.classList.add("hidden");
+
+    const successMessage = document.getElementById("saleSuccessMessage");
+    successMessage.classList.remove("hidden");
+}
+
+function resetSaleFormView() {
+    saleForm.reset();
+    moneyValue = "";
+    buildSalesForm();
+
+    const successMessage = document.getElementById("saleSuccessMessage");
+    successMessage.classList.add("hidden");
+
+    saleForm.classList.remove("hidden");
+}
 saleForm.addEventListener("submit", async function(event) {
     event.preventDefault();
 
@@ -1375,9 +1574,7 @@ saleForm.addEventListener("submit", async function(event) {
     displaySales();
     updateRevenueDashboard();
 
-    saleForm.reset();
-    moneyValue = "";
-    buildSalesForm();
+    showSaleSuccessMessage();
 });
 
 buildSalesForm();

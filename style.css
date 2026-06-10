@@ -767,3 +767,227 @@ select option {
     margin-bottom: 14px;
     background-color: #111827;
 }
+.navbar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    text-align: center;
+}
+
+.logo {
+    font-size: 1.7rem;
+    font-weight: 800;
+}
+
+.nav-links {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 700px) {
+    .navbar {
+        gap: 14px;
+    }
+
+    .logo {
+        font-size: 1.4rem;
+    }
+
+    .nav-links {
+        width: 100%;
+        gap: 10px;
+    }
+
+    .nav-links button {
+        flex: 1 1 40%;
+    }
+}
+.table-scroll {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.table-scroll table {
+    min-width: 950px;
+}
+
+.table-scroll::-webkit-scrollbar {
+    height: 8px;
+}
+
+.table-scroll::-webkit-scrollbar-thumb {
+    background: #94a3b8;
+    border-radius: 999px;
+}
+.pagination-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    margin-top: 18px;
+    font-weight: 700;
+}
+
+.pagination-controls button {
+    width: auto;
+    padding: 10px 16px;
+}
+
+.pagination-controls button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+.revenue-tabs-scroll {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.revenue-tabs {
+    min-width: max-content;
+    flex-wrap: nowrap;
+}
+
+.revenue-tabs button {
+    white-space: nowrap;
+}
+
+.revenue-tabs-scroll::-webkit-scrollbar {
+    height: 8px;
+}
+
+.revenue-tabs-scroll::-webkit-scrollbar-thumb {
+    background: #94a3b8;
+    border-radius: 999px;
+}
+/* Force revenue timestamp table to scroll instead of cutting off */
+#totalsTab .table-box {
+    max-width: 100%;
+    overflow: hidden;
+}
+
+#totalsTab .table-scroll {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    display: block;
+    -webkit-overflow-scrolling: touch;
+}
+
+#totalsTab .table-scroll table {
+    min-width: 900px;
+    width: 900px;
+    border-collapse: collapse;
+}
+
+#totalsTab .table-scroll th,
+#totalsTab .table-scroll td {
+    white-space: normal;
+    vertical-align: top;
+}
+.hidden {
+    display: none;
+}
+
+.success-message {
+    background: #ecfdf5;
+    border: 2px solid #22c55e;
+    border-radius: 18px;
+    padding: 28px;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.success-message h2 {
+    color: #166534;
+    font-size: 1.8rem;
+}
+
+.success-message p {
+    color: #166534;
+    font-weight: 600;
+}
+
+.success-message button {
+    margin-top: 16px;
+}
+.add-question-btn {
+    margin-bottom: 20px;
+}
+
+.settings-card {
+    background: white;
+    border: 1px solid #dbe3ee;
+    border-radius: 18px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.settings-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+}
+
+.settings-card-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.settings-card-actions button {
+    width: auto;
+    padding: 8px 12px;
+}
+
+.settings-option-area {
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.settings-option-area h4 {
+    margin-bottom: 12px;
+}
+
+.settings-option-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 10px;
+    margin-bottom: 10px;
+    align-items: center;
+}
+.settings-option-row:last-child {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 3px dashed #cbd5e1;
+}
+
+.settings-option-row input {
+    width: 100%;
+}
+
+.small-delete-btn {
+    background-color: #dc2626;
+}
+
+@media (max-width: 700px) {
+    .settings-card-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .settings-option-row {
+        grid-template-columns: 1fr;
+    }
+
+    .settings-card-actions button {
+        flex: 1;
+    }
+}
