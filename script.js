@@ -274,7 +274,7 @@ if (question.id === "color") {
                 moneyBox.innerHTML = `
                     <div class="money-display" id="moneyDisplay">$0.00</div>
 
-                    <input type="hidden" id="price" value="0">
+                    <input type="hidden" id="amount" value="0">
 
                     <div class="keypad">
                 <button type="button" onclick="pressMoneyKey('1')">1</button>
@@ -1499,7 +1499,7 @@ let moneyValue = "";
 
 function updateMoneyDisplay() {
     const moneyDisplay = document.getElementById("moneyDisplay");
-    const priceInput = document.getElementById("price");
+    const priceInput = document.getElementById("amount");
 
     const amount = Number(moneyValue || 0);
 
@@ -1602,7 +1602,14 @@ saleForm.addEventListener("submit", async function(event) {
     showSaleSuccessMessage();
 });
 
-buildSalesForm();
-buildSettingsForm();
-loadSalesFromCloud();
-loadFormSettingsFromCloud();
+async function initializeApp() {
+
+    buildSalesForm();
+    buildSettingsForm();
+    
+    await loadSalesFromCloud();
+    
+    await loadFormSettingsFromCloud();
+}
+
+initializeApp();
