@@ -48,7 +48,7 @@ const defaultFormQuestions = [
         ]
     },
     {
-        id: "price",
+        id: "amount",
         question: "Enter Total Purchase Amount",
         type: "moneyKeypad",
         options: []
@@ -91,8 +91,20 @@ async function loadSalesFromCloud() {
     updateRevenueDashboard();
 }
 
-function saveFormQuestions() {
-    localStorage.setItem("formQuestions", JSON.stringify(formQuestions));
+async function saveFormSettings(updatedQuestionsArray) {
+  const { data, error } = await supabaseClient
+    .from('form_settings')
+    .upsert({ 
+      id: 1, 
+      settings_json: { questions: updatedQuestionsArray } 
+    })
+    .select();
+
+  if (error) {
+    console.error("Error saving form settings:", error.message);
+  } else {
+    console.log("Form settings saved successfully:", data);
+  }
 }
 
 function showPage(pageId) {
@@ -186,6 +198,8 @@ function buildSalesForm() {
                 quantity--;
                 card.dataset.quantity = quantity;
                 qtyDisplay.textContent = quantity;
+
+                updateColorQuestions();
             } else {
                 quantity = 0;
                 card.dataset.quantity = quantity;
@@ -1021,8 +1035,10 @@ function showRevenueTab(tabId) {
     if (clickedButton) {
         clickedButton.classList.add("active-revenue-tab");
     }
-
-    updateRevenueDashboard();
+    // To make it "Fancy" when switching tabs so the charts animante.
+    setTimeout(() => {
+        updateRevenueDashboard();
+    }, 50);
 }
 function updateRevenueDashboard() {
     const dashboardRevenue = document.getElementById("dashboardRevenue");
@@ -1483,20 +1499,6 @@ function backspaceMoney() {
     updateMoneyDisplay();
 }
 
-function pressMoneyKey(digit) {
-    moneyValue += digit;
-    updateMoneyDisplay();
-}
-
-function clearMoney() {
-    moneyValue = "";
-    updateMoneyDisplay();
-}
-
-function backspaceMoney() {
-    moneyValue = moneyValue.slice(0, -1);
-    updateMoneyDisplay();
-}
 function showSaleSuccessMessage() {
     saleForm.classList.add("hidden");
 
@@ -1534,7 +1536,7 @@ saleForm.addEventListener("submit", async function(event) {
             return;
         }
     }
-    const totalPurchaseAmount = Number(document.getElementById("price").value);
+    const totalPurchaseAmount = Number(document.getElementById("amount").value);
 
     if (totalPurchaseAmount <= 0) {
         alert("Please enter the total purchase amount.");
@@ -1542,7 +1544,7 @@ saleForm.addEventListener("submit", async function(event) {
     }
 
     const newSale = {
-        date: new Date().toLocaleString(),
+        date: new Date().toISOString(),
         item: selectedProducts.items,
         color: selectedColors,
         source: document.getElementById("source").value,
