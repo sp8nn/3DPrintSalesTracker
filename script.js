@@ -14,7 +14,16 @@ let currentRevenuePage = 1;
 let productBarChart = null;
 let colorBarChart = null;
 let sourcePieChart = null;
+document.querySelectorAll(".flip-card").forEach(card => {
 
+    card.addEventListener("click", function() {
+
+        this.querySelector(".flip-card-inner")
+            .classList.toggle("flipped");
+
+    });
+
+    });
 const defaultFormQuestions = [
     {
         id: "product",

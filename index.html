@@ -12,7 +12,6 @@
     <div class="container">
 
         <nav class="navbar">
-    <div class="logo">3D Print Sales Tracker</div>
 
     <div class="nav-links">
         <button onclick="showPage('homePage')">Home</button>
@@ -21,16 +20,200 @@
         <button onclick="showPage('settingsPage')">Settings</button>
     </div>
 </nav>
-<section id="homePage" class="page active-page">
-    <div class="home-card">
-        <h1>Welcome</h1>
-        <p>This app helps small 3D printing businesses quickly track sales, revenue, and product performance.</p>
-        <p>*This is a placeholder page until the actual content is implemented.</p>
 
-        <button>Sign In</button>
-        <button>About</button>
+<section id="homePage" class="page active-page">
+
+    <div class="hero-section">
+
+        <h1>3D Print Sales Tracker</h1>
+
+        <p>
+            Track sales, monitor revenue, analyze product trends,
+            and manage your 3D printing business from any device.
+        </p>
+
+        <div class="home-actions">
+            <button class="signin-btn">
+                Sign In / Create Account
+            </button>
+            <p class="inactive-text">In Development</p>
+        </div>
+
     </div>
+
+    <div class="home-card">
+
+    <h1>About this Application</h1>
+
+    <p>
+        3D Print Sales Tracker is a cloud-based sales management system
+        built specifically for 3D printing businesses. The application
+        allows users to record sales, track revenue, analyze product
+        trends, monitor filament usage, and customize their sales form
+        without needing programming knowledge.
+    </p>
+
+</div>
+
+   <!-- SALES SECTION -->
+
+<div class="home-card">
+
+    <h2>🛒 Sales</h2>
+
+    <div class="about-split">
+
+        <div class="about-text">
+
+            <p>
+                Record sales while vending at events,
+                conventions, markets, Etsy, or Facebook Marketplace.
+            </p>
+
+            <ul>
+                <li>Multi-product purchases</li>
+                <li>Color tracking</li>
+                <li>Quantity controls</li>
+                <li>Custom money keypad</li>
+                <li>Automatic timestamps</li>
+                <li>Cloud storage</li>
+            </ul>
+
+        </div>
+
+        <div class="about-image">
+            <img src="images/User_Adding_Sale.png">
+            <p class="demo-label">
+                Demonstration Image - Final UI may differ
+            </p>
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- REVENUE SECTION -->
+
+<div class="home-card">
+
+    <h2>📊 Revenue Dashboard</h2>
+
+    <div class="about-split">
+
+        <div class="about-text">
+
+            <p>
+                Review revenue performance, identify
+                popular products, analyze filament colors,
+                and generate monthly reports.
+            </p>
+
+        </div>
+
+        <div class="about-image">
+            <img src="images/User_Checking_Revenue.png">
+            <p class="demo-label">
+                Demonstration Image - Final UI may differ
+            </p>
+        </div>
+
+    </div>
+<div class="feature-grid">
+
+    <div class="mini-card">
+        <h3>Totals & Timestamps</h3>
+        <p>Total revenue, sales history, and source tracking.</p>
+    </div>
+
+    <div class="mini-card">
+        <h3>Popular Products</h3>
+        <p>Shows best-selling products and quantity trends.</p>
+    </div>
+
+    <div class="mini-card">
+        <h3>Popular Colors</h3>
+        <p>Tracks filament color popularity.</p>
+    </div>
+
+    <div class="mini-card">
+        <h3>Monthly Sales</h3>
+        <p>Groups transactions into monthly reports.</p>
+    </div>
+
+    <div class="mini-card full-width">
+        <h3>Search & Filter</h3>
+        <p>Search sales by custom date ranges.</p>
+    </div>
+
+</div>
+</div>
+
+
+<!-- SETTINGS -->
+
+<div class="home-card">
+
+    <h2>⚙️ Settings</h2>
+<div class="feature-grid">
+
+    <div class="mini-card">
+        <h3>Form Builder</h3>
+
+        <p>
+            Modify questions, products,
+            dropdowns, images, and question order
+            without touching code.
+        </p>
+    </div>
+
+    <div class="mini-card">
+        <h3>Cloud Synchronization</h3>
+
+        <p>
+            Form settings and sales data
+            sync across devices using Supabase.
+        </p>
+    </div>
+
+</div>
+</div>
+<div class="home-card">
+
+    <div class="feature-summary-grid">
+
+        <div>
+            <h2>Key Features</h2>
+
+            <ul class="feature-list">
+                <li>Cloud-based sales storage</li>
+                <li>Customizable sales form builder</li>
+                <li>Revenue dashboards and analytics</li>
+                <li>Product popularity tracking</li>
+                <li>Color usage statistics</li>
+                <li>Monthly sales reporting</li>
+                <li>Mobile-friendly design</li>
+            </ul>
+        </div>
+
+        <div>
+            <h2>Upcoming Features</h2>
+
+            <ul class="feature-list">
+                <li>✓ Cloud database integration</li>
+                <li>✓ Revenue analytics dashboard</li>
+                <li>✓ Monthly reporting</li>
+                <li>⏳ User accounts</li>
+                <li>✓ Product image support</li>
+                <li>⏳ Inventory tracking</li>
+            </ul>
+        </div>
+
+    </div>
+
+</div>
 </section>
+
 
 <section id="salesPage" class="page">
 
