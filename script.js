@@ -61,7 +61,27 @@ const defaultFormQuestions = [
     }
 ];
 
-let formQuestions = JSON.parse(localStorage.getItem("formQuestions")) || defaultFormQuestions;
+let formQuestions = defaultFormQuestions;
+
+async function loadFormSettingsFromCloud() {
+    const { data, error } = await supabaseClient
+        .from("form_settings")
+        .select("settings_json")
+        .eq("id", 1)
+        .single();
+
+    if (error) {
+        console.error("Error loading form settings from cloud:", error);
+        return; 
+    }
+
+    if (data && data.settings_json && data.settings_json.questions) {
+        formQuestions = data.settings_json.questions;
+        
+        buildSalesForm();
+        buildSettingsForm();
+    }
+}
 
 async function loadSalesFromCloud() {
     const { data, error } = await supabaseClient
@@ -91,20 +111,23 @@ async function loadSalesFromCloud() {
     updateRevenueDashboard();
 }
 
-async function saveFormSettings(updatedQuestionsArray) {
-  const { data, error } = await supabaseClient
-    .from('form_settings')
-    .upsert({ 
-      id: 1, 
-      settings_json: { questions: updatedQuestionsArray } 
-    })
-    .select();
+async function saveFormQuestions() {
 
-  if (error) {
-    console.error("Error saving form settings:", error.message);
-  } else {
-    console.log("Form settings saved successfully:", data);
-  }
+    localStorage.setItem("formQuestions", JSON.stringify(formQuestions));
+
+
+    const { error } = await supabaseClient
+        .from('form_settings')
+        .upsert({ 
+          id: 1, 
+          settings_json: { questions: formQuestions } 
+        });
+
+    if (error) {
+        console.error("Error syncing settings to cloud:", error.message);
+    } else {
+        console.log("Settings synced universally to cloud.");
+    }
 }
 
 function showPage(pageId) {
@@ -1582,3 +1605,4 @@ saleForm.addEventListener("submit", async function(event) {
 buildSalesForm();
 buildSettingsForm();
 loadSalesFromCloud();
+loadFormSettingsFromCloud();
