@@ -267,16 +267,16 @@ if (question.id === "color") {
 
             questionBox.appendChild(select);
         }
-            if (question.type === "moneyKeypad") {
-                const moneyBox = document.createElement("div");
-                moneyBox.classList.add("money-box");
+        if (question.type === "moneyKeypad") {
+            const moneyBox = document.createElement("div");
+            moneyBox.classList.add("money-box");
 
-                moneyBox.innerHTML = `
-                    <div class="money-display" id="moneyDisplay">$0.00</div>
+            moneyBox.innerHTML = `
+                <div class="money-display" id="moneyDisplay">$0.00</div>
 
-                    <input type="hidden" id="amount" value="0">
+                <input type="hidden" id="amount" value="0">
 
-                    <div class="keypad">
+                <div class="keypad">
                 <button type="button" onclick="pressMoneyKey('1')">1</button>
                 <button type="button" onclick="pressMoneyKey('2')">2</button>
                 <button type="button" onclick="pressMoneyKey('3')">3</button>
@@ -1499,6 +1499,7 @@ let moneyValue = "";
 
 function updateMoneyDisplay() {
     const moneyDisplay = document.getElementById("moneyDisplay");
+    
     const priceInput = document.getElementById("amount");
 
     const amount = Number(moneyValue || 0);
