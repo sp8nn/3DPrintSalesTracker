@@ -4,9 +4,18 @@
 
 body {
     margin: 0;
+    padding: 0;
+
     font-family: Arial, sans-serif;
-    background-color: #f4f6f8;
-    color: #222;
+
+    background: linear-gradient(
+    180deg,
+    #bfdbfe 0%,
+    #dbeafe 40%,
+    #ffffff 100%
+);
+
+    min-height: 100vh;
 }
 
 .container {
@@ -19,14 +28,17 @@ h1 {
     text-align: center;
 }
 
-.summary-box,
+.home-card,
 .form-box,
-.table-box {
+.table-box,
+.summary-box,
+.customize-box,
+.mini-card {
     background: white;
     padding: 20px;
     margin-bottom: 20px;
     border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
 
 #totalRevenue {
