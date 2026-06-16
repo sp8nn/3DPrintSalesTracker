@@ -1571,7 +1571,7 @@ saleForm.addEventListener("submit", async function(event) {
         date: new Date().toISOString(),
         item: selectedProducts.items,
         color: selectedColors,
-        source: document.getElementById("source").value,
+        source: (document.getElementById("source") || document.querySelector("select[id='source']")).value,
         price: totalPurchaseAmount,
         quantity: selectedProducts.totalQuantity
     };
