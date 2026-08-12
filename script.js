@@ -14,7 +14,16 @@ let currentRevenuePage = 1;
 let productBarChart = null;
 let colorBarChart = null;
 let sourcePieChart = null;
+document.querySelectorAll(".flip-card").forEach(card => {
 
+    card.addEventListener("click", function() {
+
+        this.querySelector(".flip-card-inner")
+            .classList.toggle("flipped");
+
+    });
+
+    });
 const defaultFormQuestions = [
     {
     id: "product",
@@ -138,7 +147,7 @@ const defaultFormQuestions = [
         ]
     },
     {
-        id: "price",
+        id: "amount",
         question: "Enter Total Purchase Amount",
         type: "moneyKeypad",
         options: []
@@ -151,36 +160,7 @@ const defaultFormQuestions = [
     }
 ];
 
-let formQuestions = defaultFormQuestions;
-
-async function loadFormSettingsFromCloud() {
-    const { data, error } = await supabaseClient
-        .from("form_settings")
-        .select("settings_json")
-        .eq("id", 1)
-        .single();
-
-    if (error) {
-        console.error("Error loading form settings from cloud:", error);
-        return;
-    }
-
-    if (
-        data &&
-        data.settings_json &&
-        data.settings_json.questions
-    ) {
-        formQuestions = data.settings_json.questions;
-
-        localStorage.setItem(
-            "formQuestions",
-            JSON.stringify(formQuestions)
-        );
-
-        buildSalesForm();
-        buildSettingsForm();
-    }
-}
+let formQuestions = JSON.parse(localStorage.getItem("formQuestions")) || defaultFormQuestions;
 
 async function loadSalesFromCloud() {
     const { data, error } = await supabaseClient
@@ -210,29 +190,8 @@ async function loadSalesFromCloud() {
     
 }
 
-async function saveFormQuestions() {
-    localStorage.setItem(
-        "formQuestions",
-        JSON.stringify(formQuestions)
-    );
-
-    const { error } = await supabaseClient
-        .from("form_settings")
-        .upsert({
-            id: 1,
-            settings_json: {
-                questions: formQuestions
-            }
-        });
-
-    if (error) {
-        console.error(
-            "Error syncing form settings to Supabase:",
-            error
-        );
-    } else {
-        console.log("Form settings synced to Supabase.");
-    }
+function saveFormQuestions() {
+    localStorage.setItem("formQuestions", JSON.stringify(formQuestions));
 }
 
 function showPage(pageId) {
@@ -468,111 +427,29 @@ function buildSalesForm() {
                             let quantity =
                                 Number(card.dataset.quantity);
 
-                            if (quantity > 1) {
+            if (quantity > 1) {
+                quantity--;
+                card.dataset.quantity = quantity;
+                qtyDisplay.textContent = quantity;
+            } else {
+                quantity = 0;
+                card.dataset.quantity = quantity;
+                qtyDisplay.textContent = "1";
+                card.classList.remove("selected");
+                updateColorQuestions();
+            }
+        });
 
-                                quantity--;
+        grid.appendChild(card);
+    });
 
-                                card.dataset.quantity = quantity;
-
-                                qtyDisplay.textContent = quantity;
-
-                                /*
-                                IMPORTANT:
-                                Update the color questions when
-                                quantity decreases.
-                                */
-                                updateColorQuestions();
-
-                            } else {
-
-                                quantity = 0;
-
-                                card.dataset.quantity = quantity;
-
-                                qtyDisplay.textContent = "1";
-
-                                card.classList.remove("selected");
-
-                                updateColorQuestions();
-                            }
-                        }
-                    );
-
-                    productGrid.appendChild(card);
-                });
-
-                categoryPanel.appendChild(productGrid);
-
-                productArea.appendChild(categoryPanel);
-
-                /*
-                -------------------------------
-                OPEN CATEGORY
-                -------------------------------
-                */
-
-                categoryButton.addEventListener(
-                    "click",
-                    function() {
-
-                        categoryGrid.style.display = "none";
-
-                        document
-                            .querySelectorAll(
-                                ".category-product-panel"
-                            )
-                            .forEach(function(panel) {
-
-                                panel.style.display = "none";
-                            });
-
-                        categoryPanel.style.display = "block";
-                    }
-                );
-
-                /*
-                -------------------------------
-                BACK TO CATEGORIES
-                -------------------------------
-                */
-
-                backButton.addEventListener(
-                    "click",
-                    function() {
-
-                        categoryPanel.style.display = "none";
-
-                        categoryGrid.style.display = "grid";
-                    }
-                );
-            });
-
-            categoryContainer.appendChild(categoryGrid);
-            categoryContainer.appendChild(productArea);
-
-            questionBox.appendChild(categoryContainer);
-
-            dynamicSalesForm.appendChild(questionBox);
-
-            return;
-        }
-
-        /*
-        ============================================================
-        COLOR QUESTION
-        ============================================================
-        */
-
-        if (question.id === "color") {
-
-            const colorSection = document.createElement("div");
-
-            colorSection.id = "colorSection";
-
-            colorSection.classList.add("color-section");
-
-            colorSection.innerHTML =
-                "<p class='helper-text'>Select a print first to choose colors.</p>";
+    questionBox.appendChild(grid);
+}
+if (question.id === "color") {
+    const colorSection = document.createElement("div");
+    colorSection.id = "colorSection";
+    colorSection.classList.add("color-section");
+    colorSection.innerHTML = "<p class='helper-text'>Select a print first to choose colors.</p>";
 
             questionBox.appendChild(colorSection);
 
@@ -619,55 +496,19 @@ function buildSalesForm() {
 
             questionBox.appendChild(select);
         }
+            if (question.type === "moneyKeypad") {
+                const moneyBox = document.createElement("div");
+                moneyBox.classList.add("money-box");
 
-        /*
-        ============================================================
-        MONEY KEYPAD
-        ============================================================
-        */
+                moneyBox.innerHTML = `
+                    <div class="money-display" id="moneyDisplay">$0.00</div>
 
-        if (question.type === "moneyKeypad") {
+                    <input type="hidden" id="price" value="0">
 
-            const moneyBox = document.createElement("div");
-
-            moneyBox.classList.add("money-box");
-
-            moneyBox.innerHTML = `
-                <div
-                    class="money-display"
-                    id="moneyDisplay"
-                >
-                    $0.00
-                </div>
-
-                <input
-                    type="hidden"
-                    id="price"
-                    value="0"
-                >
-
-                <div class="keypad">
-
-                    <button
-                        type="button"
-                        onclick="pressMoneyKey('1')"
-                    >
-                        1
-                    </button>
-
-                    <button
-                        type="button"
-                        onclick="pressMoneyKey('2')"
-                    >
-                        2
-                    </button>
-
-                    <button
-                        type="button"
-                        onclick="pressMoneyKey('3')"
-                    >
-                        3
-                    </button>
+                    <div class="keypad">
+                <button type="button" onclick="pressMoneyKey('1')">1</button>
+                <button type="button" onclick="pressMoneyKey('2')">2</button>
+                <button type="button" onclick="pressMoneyKey('3')">3</button>
 
                     <button
                         type="button"
@@ -2243,8 +2084,10 @@ function showRevenueTab(tabId) {
     if (clickedButton) {
         clickedButton.classList.add("active-revenue-tab");
     }
-
-    updateRevenueDashboard();
+    // To make it "Fancy" when switching tabs so the charts animante.
+    setTimeout(() => {
+        updateRevenueDashboard();
+    }, 50);
 }
 function updateRevenueDashboard() {
     const dashboardRevenue = document.getElementById("dashboardRevenue");
@@ -2920,7 +2763,8 @@ let moneyValue = "";
 
 function updateMoneyDisplay() {
     const moneyDisplay = document.getElementById("moneyDisplay");
-    const priceInput = document.getElementById("price");
+    
+    const priceInput = document.getElementById("amount");
 
     const amount = Number(moneyValue || 0);
 
@@ -2943,20 +2787,6 @@ function backspaceMoney() {
     updateMoneyDisplay();
 }
 
-function pressMoneyKey(digit) {
-    moneyValue += digit;
-    updateMoneyDisplay();
-}
-
-function clearMoney() {
-    moneyValue = "";
-    updateMoneyDisplay();
-}
-
-function backspaceMoney() {
-    moneyValue = moneyValue.slice(0, -1);
-    updateMoneyDisplay();
-}
 function showSaleSuccessMessage() {
     saleForm.classList.add("hidden");
 
@@ -2989,25 +2819,12 @@ saleForm.addEventListener("submit", async function(event) {
     const colorGroups =
     document.querySelectorAll(".color-branch-box");
 
-for (let group of colorGroups) {
-
-    const checkedColors =
-        group.querySelectorAll(
-            "input[type='checkbox']:checked"
-        );
-
-    if (checkedColors.length === 0) {
-
-        const label =
-            group.querySelector("label");
-
-        alert(
-            `Please select at least one color for ${label.textContent.replace("Colors for ", "")}.`
-        );
-
-        return;
+    for (let dropdown of colorDropdowns) {
+        if (dropdown.value === "") {
+            alert("Please choose a color for each selected print.");
+            return;
+        }
     }
-}
     const totalPurchaseAmount = Number(document.getElementById("price").value);
 
     if (totalPurchaseAmount <= 0) {
@@ -3016,10 +2833,10 @@ for (let group of colorGroups) {
     }
 
     const newSale = {
-        date: new Date().toLocaleString(),
+        date: new Date().toISOString(),
         item: selectedProducts.items,
         color: selectedColors,
-        source: document.getElementById("source").value,
+        source: (document.getElementById("source") || document.querySelector("select[id='source']")).value,
         price: totalPurchaseAmount,
         quantity: selectedProducts.totalQuantity
     };
@@ -3051,15 +2868,6 @@ for (let group of colorGroups) {
     showSaleSuccessMessage();
 });
 
-async function initializeApp() {
-    await loadFormSettingsFromCloud();
-
-    buildSalesForm();
-    buildSettingsForm();
-
-    await loadSalesFromCloud();
-
-    updateRevenueDashboard();
-}
-
-initializeApp();
+buildSalesForm();
+buildSettingsForm();
+loadSalesFromCloud();
