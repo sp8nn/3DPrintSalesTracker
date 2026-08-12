@@ -209,7 +209,8 @@ function showPage(pageId) {
 }
 
 function buildSalesForm() {
-    const dynamicSalesForm = document.getElementById("dynamicSalesForm");
+    const dynamicSalesForm =
+        document.getElementById("dynamicSalesForm");
 
     if (!dynamicSalesForm) return;
 
@@ -217,12 +218,18 @@ function buildSalesForm() {
 
     formQuestions.forEach(function(question) {
 
-        const questionBox = document.createElement("div");
+        const questionBox =
+            document.createElement("div");
+
         questionBox.classList.add("form-step");
 
-        const label = document.createElement("label");
+        const label =
+            document.createElement("label");
+
         label.textContent = question.question;
+
         questionBox.appendChild(label);
+
 
         /*
         ============================================================
@@ -232,231 +239,494 @@ function buildSalesForm() {
 
         if (question.type === "categoryChoice") {
 
-            const categoryContainer = document.createElement("div");
-            categoryContainer.classList.add("category-choice-container");
+            const categoryContainer =
+                document.createElement("div");
 
-            const categoryGrid = document.createElement("div");
-            categoryGrid.classList.add("category-grid");
+            categoryContainer.classList.add(
+                "category-choice-container"
+            );
 
-            const productArea = document.createElement("div");
-            productArea.classList.add("category-product-area");
 
-            question.categories.forEach(function(category, categoryIndex) {
+            const categoryGrid =
+                document.createElement("div");
 
-                /*
-                -------------------------------
-                CATEGORY BUTTON
-                -------------------------------
-                */
+            categoryGrid.classList.add(
+                "category-grid"
+            );
 
-                const categoryButton = document.createElement("button");
 
-                categoryButton.type = "button";
-                categoryButton.classList.add("category-card");
-                categoryButton.textContent = category.name;
+            const productArea =
+                document.createElement("div");
 
-                if (category.image) {
-                    categoryButton.innerHTML = `
-                        <div class="category-image">
-                            <img src="${category.image}" alt="${category.name}">
-                        </div>
+            productArea.classList.add(
+                "category-product-area"
+            );
 
-                        <div class="category-name">
-                            ${category.name}
-                        </div>
-                    `;
-                }
+            productArea.style.display = "none";
 
-                categoryGrid.appendChild(categoryButton);
 
-                /*
-                -------------------------------
-                CATEGORY PRODUCT PANEL
-                -------------------------------
-                */
+            /*
+            ========================================================
+            CREATE CATEGORIES
+            ========================================================
+            */
 
-                const categoryPanel = document.createElement("div");
-
-                categoryPanel.classList.add("category-product-panel");
-
-                if (categoryIndex !== 0) {
-                    categoryPanel.style.display = "none";
-                }
-
-                categoryPanel.dataset.category = category.name;
-
-                const panelHeader = document.createElement("div");
-                panelHeader.classList.add("category-panel-header");
-
-                const backButton = document.createElement("button");
-
-                backButton.type = "button";
-                backButton.classList.add("category-back-btn");
-                backButton.textContent = "← Back to Categories";
-
-                const categoryTitle = document.createElement("h3");
-                categoryTitle.textContent = category.name;
-
-                panelHeader.appendChild(backButton);
-                panelHeader.appendChild(categoryTitle);
-
-                categoryPanel.appendChild(panelHeader);
-
-                const productGrid = document.createElement("div");
-                productGrid.classList.add("choice-grid");
-
-                category.products.forEach(function(product) {
-
-                    const card = document.createElement("div");
-
-                    card.classList.add("choice-card");
-
-                    card.dataset.value = product.name;
+            question.categories.forEach(
+                function(category, categoryIndex) {
 
                     /*
-                    Keep quantity in the card so the existing
-                    color system can use it.
+                    ------------------------------------------------
+                    CATEGORY BUTTON
+                    ------------------------------------------------
                     */
-                    card.dataset.quantity = "0";
 
-                    card.innerHTML = `
-                        <div class="choice-image">
-                            ${
-                                product.image
-                                    ? `<img src="${product.image}" alt="${product.name}">`
-                                    : `<span>No Image</span>`
-                            }
-                        </div>
+                    const categoryButton =
+                        document.createElement("button");
 
-                        <p>${product.name}</p>
+                    categoryButton.type = "button";
 
-                        <div class="quantity-control">
+                    categoryButton.classList.add(
+                        "category-card"
+                    );
 
-                            <button
-                                type="button"
-                                class="qty-btn minus-btn"
-                            >
-                                -
-                            </button>
+                    categoryButton.textContent =
+                        category.name;
 
-                            <span class="qty-display">1</span>
 
-                            <button
-                                type="button"
-                                class="qty-btn plus-btn"
-                            >
-                                +
-                            </button>
+                    if (category.image) {
 
-                        </div>
-                    `;
+                        categoryButton.innerHTML = `
+                            <div class="category-image">
+                                <img
+                                    src="${category.image}"
+                                    alt="${category.name}"
+                                >
+                            </div>
 
-                    const minusBtn =
-                        card.querySelector(".minus-btn");
+                            <div class="category-name">
+                                ${category.name}
+                            </div>
+                        `;
+                    }
 
-                    const plusBtn =
-                        card.querySelector(".plus-btn");
-
-                    const qtyDisplay =
-                        card.querySelector(".qty-display");
 
                     /*
-                    -------------------------------
-                    SELECT PRODUCT
-                    -------------------------------
+                    ------------------------------------------------
+                    CATEGORY PRODUCT PANEL
+                    ------------------------------------------------
                     */
 
-                    card.addEventListener("click", function() {
+                    const categoryPanel =
+                        document.createElement("div");
 
-                        let quantity =
-                            Number(card.dataset.quantity);
+                    categoryPanel.classList.add(
+                        "category-product-panel"
+                    );
 
-                        if (quantity === 0) {
+                    categoryPanel.dataset.category =
+                        category.name;
 
-                            quantity = 1;
-
-                            card.dataset.quantity = quantity;
-
-                            qtyDisplay.textContent = quantity;
-
-                            card.classList.add("selected");
-
-                            updateColorQuestions();
-                        }
-                    });
 
                     /*
-                    -------------------------------
-                    PLUS
-                    -------------------------------
+                    ------------------------------------------------
+                    PANEL HEADER
+                    ------------------------------------------------
                     */
 
-                    plusBtn.addEventListener(
-                        "click",
-                        function(event) {
+                    const panelHeader =
+                        document.createElement("div");
 
-                            event.stopPropagation();
+                    panelHeader.classList.add(
+                        "category-panel-header"
+                    );
 
-                            let quantity =
-                                Number(card.dataset.quantity);
 
-                            quantity++;
+                    const backButton =
+                        document.createElement("button");
 
-                            card.dataset.quantity = quantity;
+                    backButton.type = "button";
 
-                            qtyDisplay.textContent = quantity;
+                    backButton.classList.add(
+                        "category-back-btn"
+                    );
 
-                            card.classList.add("selected");
+                    backButton.textContent =
+                        "← Back to Categories";
 
-                            updateColorQuestions();
+
+                    const categoryTitle =
+                        document.createElement("h3");
+
+                    categoryTitle.textContent =
+                        category.name;
+
+
+                    panelHeader.appendChild(
+                        backButton
+                    );
+
+                    panelHeader.appendChild(
+                        categoryTitle
+                    );
+
+                    categoryPanel.appendChild(
+                        panelHeader
+                    );
+
+
+                    /*
+                    ------------------------------------------------
+                    PRODUCT GRID
+                    ------------------------------------------------
+                    */
+
+                    const productGrid =
+                        document.createElement("div");
+
+                    productGrid.classList.add(
+                        "choice-grid"
+                    );
+
+
+                    category.products.forEach(
+                        function(product) {
+
+                            const card =
+                                document.createElement("div");
+
+                            card.classList.add(
+                                "choice-card"
+                            );
+
+                            card.dataset.value =
+                                product.name;
+
+                            card.dataset.quantity =
+                                "0";
+
+
+                            card.innerHTML = `
+                                <div class="choice-image">
+                                    ${
+                                        product.image
+                                            ? `
+                                                <img
+                                                    src="${product.image}"
+                                                    alt="${product.name}"
+                                                >
+                                            `
+                                            : `
+                                                <span>
+                                                    No Image
+                                                </span>
+                                            `
+                                    }
+                                </div>
+
+                                <p>
+                                    ${product.name}
+                                </p>
+
+                                <div class="quantity-control">
+
+                                    <button
+                                        type="button"
+                                        class="qty-btn minus-btn"
+                                    >
+                                        -
+                                    </button>
+
+                                    <span
+                                        class="qty-display"
+                                    >
+                                        1
+                                    </span>
+
+                                    <button
+                                        type="button"
+                                        class="qty-btn plus-btn"
+                                    >
+                                        +
+                                    </button>
+
+                                </div>
+                            `;
+
+
+                            const minusBtn =
+                                card.querySelector(
+                                    ".minus-btn"
+                                );
+
+                            const plusBtn =
+                                card.querySelector(
+                                    ".plus-btn"
+                                );
+
+                            const qtyDisplay =
+                                card.querySelector(
+                                    ".qty-display"
+                                );
+
+
+                            /*
+                            ----------------------------------------
+                            SELECT PRODUCT
+                            ----------------------------------------
+                            */
+
+                            card.addEventListener(
+                                "click",
+                                function() {
+
+                                    let quantity =
+                                        Number(
+                                            card.dataset.quantity
+                                        );
+
+
+                                    if (quantity === 0) {
+
+                                        quantity = 1;
+
+                                        card.dataset.quantity =
+                                            quantity;
+
+                                        qtyDisplay.textContent =
+                                            quantity;
+
+                                        card.classList.add(
+                                            "selected"
+                                        );
+
+                                        updateColorQuestions();
+                                    }
+                                }
+                            );
+
+
+                            /*
+                            ----------------------------------------
+                            PLUS
+                            ----------------------------------------
+                            */
+
+                            plusBtn.addEventListener(
+                                "click",
+                                function(event) {
+
+                                    event.stopPropagation();
+
+                                    let quantity =
+                                        Number(
+                                            card.dataset.quantity
+                                        );
+
+                                    quantity++;
+
+                                    card.dataset.quantity =
+                                        quantity;
+
+                                    qtyDisplay.textContent =
+                                        quantity;
+
+                                    card.classList.add(
+                                        "selected"
+                                    );
+
+                                    updateColorQuestions();
+                                }
+                            );
+
+
+                            /*
+                            ----------------------------------------
+                            MINUS
+                            ----------------------------------------
+                            */
+
+                            minusBtn.addEventListener(
+                                "click",
+                                function(event) {
+
+                                    event.stopPropagation();
+
+                                    let quantity =
+                                        Number(
+                                            card.dataset.quantity
+                                        );
+
+
+                                    if (quantity > 1) {
+
+                                        quantity--;
+
+                                        card.dataset.quantity =
+                                            quantity;
+
+                                        qtyDisplay.textContent =
+                                            quantity;
+
+                                    } else {
+
+                                        quantity = 0;
+
+                                        card.dataset.quantity =
+                                            quantity;
+
+                                        qtyDisplay.textContent =
+                                            "1";
+
+                                        card.classList.remove(
+                                            "selected"
+                                        );
+
+                                        updateColorQuestions();
+                                    }
+                                }
+                            );
+
+
+                            productGrid.appendChild(card);
                         }
                     );
 
+
+                    categoryPanel.appendChild(
+                        productGrid
+                    );
+
+
                     /*
-                    -------------------------------
-                    MINUS
-                    -------------------------------
+                    ------------------------------------------------
+                    CATEGORY BUTTON CLICK
+                    ------------------------------------------------
                     */
 
-                    minusBtn.addEventListener(
+                    categoryButton.addEventListener(
                         "click",
-                        function(event) {
+                        function() {
 
-                            event.stopPropagation();
+                            categoryGrid.style.display =
+                                "none";
 
-                            let quantity =
-                                Number(card.dataset.quantity);
+                            productArea.style.display =
+                                "block";
 
-            if (quantity > 1) {
-                quantity--;
-                card.dataset.quantity = quantity;
-                qtyDisplay.textContent = quantity;
-            } else {
-                quantity = 0;
-                card.dataset.quantity = quantity;
-                qtyDisplay.textContent = "1";
-                card.classList.remove("selected");
-                updateColorQuestions();
-            }
-        });
 
-        grid.appendChild(card);
-    });
+                            const allPanels =
+                                productArea.querySelectorAll(
+                                    ".category-product-panel"
+                                );
 
-    questionBox.appendChild(grid);
-}
-if (question.id === "color") {
-    const colorSection = document.createElement("div");
-    colorSection.id = "colorSection";
-    colorSection.classList.add("color-section");
-    colorSection.innerHTML = "<p class='helper-text'>Select a print first to choose colors.</p>";
 
-            questionBox.appendChild(colorSection);
+                            allPanels.forEach(
+                                function(panel) {
 
-            dynamicSalesForm.appendChild(questionBox);
+                                    panel.style.display =
+                                        "none";
+                                }
+                            );
+
+
+                            categoryPanel.style.display =
+                                "block";
+                        }
+                    );
+
+
+                    /*
+                    ------------------------------------------------
+                    BACK BUTTON
+                    ------------------------------------------------
+                    */
+
+                    backButton.addEventListener(
+                        "click",
+                        function() {
+
+                            productArea.style.display =
+                                "none";
+
+                            categoryGrid.style.display =
+                                "grid";
+                        }
+                    );
+
+
+                    categoryGrid.appendChild(
+                        categoryButton
+                    );
+
+                    productArea.appendChild(
+                        categoryPanel
+                    );
+                }
+            );
+
+
+            /*
+            ========================================================
+            ADD CATEGORY / PRODUCT AREAS
+            ========================================================
+            */
+
+            categoryContainer.appendChild(
+                categoryGrid
+            );
+
+            categoryContainer.appendChild(
+                productArea
+            );
+
+
+            questionBox.appendChild(
+                categoryContainer
+            );
+
+
+            dynamicSalesForm.appendChild(
+                questionBox
+            );
+
+            continue;
+        }
+
+
+        /*
+        ============================================================
+        COLOR QUESTION
+        ============================================================
+        */
+
+        if (question.id === "color") {
+
+            const colorSection =
+                document.createElement("div");
+
+            colorSection.id =
+                "colorSection";
+
+            colorSection.classList.add(
+                "color-section"
+            );
+
+            colorSection.innerHTML =
+                "<p class='helper-text'>Select a print first to choose colors.</p>";
+
+
+            questionBox.appendChild(
+                colorSection
+            );
+
+
+            dynamicSalesForm.appendChild(
+                questionBox
+            );
 
             return;
         }
+
 
         /*
         ============================================================
@@ -466,49 +736,111 @@ if (question.id === "color") {
 
         if (question.type === "dropdown") {
 
-            const select = document.createElement("select");
+            const select =
+                document.createElement("select");
 
-            select.id = question.id;
+            select.id =
+                question.id;
 
-            select.classList.add("big-select");
+            select.classList.add(
+                "big-select"
+            );
 
             select.required = true;
 
-            const placeholder = document.createElement("option");
+
+            const placeholder =
+                document.createElement("option");
 
             placeholder.value = "";
 
-            placeholder.textContent = "Choose an option";
+            placeholder.textContent =
+                "Choose an option";
 
-            select.appendChild(placeholder);
+            select.appendChild(
+                placeholder
+            );
 
-            question.options.forEach(function(option) {
 
-                const optionElement =
-                    document.createElement("option");
+            question.options.forEach(
+                function(option) {
 
-                optionElement.value = option;
+                    const optionElement =
+                        document.createElement(
+                            "option"
+                        );
 
-                optionElement.textContent = option;
+                    optionElement.value =
+                        option;
 
-                select.appendChild(optionElement);
-            });
+                    optionElement.textContent =
+                        option;
 
-            questionBox.appendChild(select);
+                    select.appendChild(
+                        optionElement
+                    );
+                }
+            );
+
+
+            questionBox.appendChild(
+                select
+            );
         }
-            if (question.type === "moneyKeypad") {
-                const moneyBox = document.createElement("div");
-                moneyBox.classList.add("money-box");
 
-                moneyBox.innerHTML = `
-                    <div class="money-display" id="moneyDisplay">$0.00</div>
 
-                    <input type="hidden" id="price" value="0">
+        /*
+        ============================================================
+        MONEY KEYPAD
+        ============================================================
+        */
 
-                    <div class="keypad">
-                <button type="button" onclick="pressMoneyKey('1')">1</button>
-                <button type="button" onclick="pressMoneyKey('2')">2</button>
-                <button type="button" onclick="pressMoneyKey('3')">3</button>
+        if (question.type === "moneyKeypad") {
+
+            const moneyBox =
+                document.createElement("div");
+
+            moneyBox.classList.add(
+                "money-box"
+            );
+
+
+            moneyBox.innerHTML = `
+                <div
+                    class="money-display"
+                    id="moneyDisplay"
+                >
+                    $0.00
+                </div>
+
+                <input
+                    type="hidden"
+                    id="price"
+                    value="0"
+                >
+
+                <div class="keypad">
+
+                    <button
+                        type="button"
+                        onclick="pressMoneyKey('1')"
+                    >
+                        1
+                    </button>
+
+                    <button
+                        type="button"
+                        onclick="pressMoneyKey('2')"
+                    >
+                        2
+                    </button>
+
+                    <button
+                        type="button"
+                        onclick="pressMoneyKey('3')"
+                    >
+                        3
+                    </button>
 
                     <button
                         type="button"
@@ -576,8 +908,12 @@ if (question.id === "color") {
                 </div>
             `;
 
-            questionBox.appendChild(moneyBox);
+
+            questionBox.appendChild(
+                moneyBox
+            );
         }
+
 
         /*
         ============================================================
@@ -587,29 +923,45 @@ if (question.id === "color") {
 
         if (question.type === "number") {
 
-            const input = document.createElement("input");
+            const input =
+                document.createElement("input");
 
-            input.type = "number";
+            input.type =
+                "number";
 
-            input.id = question.id;
+            input.id =
+                question.id;
 
-            input.required = true;
+            input.required =
+                true;
+
 
             if (question.id === "quantity") {
-                input.min = "1";
+
+                input.min =
+                    "1";
             }
+
 
             if (question.id === "price") {
 
-                input.min = "0";
+                input.min =
+                    "0";
 
-                input.step = "0.01";
+                input.step =
+                    "0.01";
             }
 
-            questionBox.appendChild(input);
+
+            questionBox.appendChild(
+                input
+            );
         }
 
-        dynamicSalesForm.appendChild(questionBox);
+
+        dynamicSalesForm.appendChild(
+            questionBox
+        );
     });
 }
 
